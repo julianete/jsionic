@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <h1>Calcula web</h1>
+</head>
+<script>
+    var x = 4;
+    var y = 6;
+    var z = x+y;
+    function respuesta() {
+       document.getElementById("respu0").innerHTML=z;
+    }
+    function calcularLetraDni(){
+
+        var letras=[
+            "T",   "R",   "W",    "A",    "G",   "M",    "Y",   "F",   "P",
+            "D",   "X",   "B",    "N",    "J",   "Z",    "S",   "Q",   "V",
+            "H",   "L",   "C",    "K",    "E"];
+
+            console.log(letras);
+        //1.- obtener dni de la caja 
+        var dni = document.getElementById("dni").value;
+        console.log("dni ="+dni);
+        var div = parseInt(dni);
+        console.log("div ="+div);
+        var resto = 0;
+
+        //2.- calcular el d.c. nif
+        var letra = div / 23;
+        var letra = Math.abs(letra);
+        
+        console.log("letra ="+letra);
+        //resto = div - (letra * 23);
+        resto = div % 23;
+
+        //3.- mostrar el resultado
+        console.log("cociente =" + letra + " resto ="+ resto);
+        alert("dg =" + letras[resto]);
+        
+    }
+</script>
+<body>
+    <h1 style="color:darkblue; font-size:32px;">Pregunta</h1>
+    <input type="number" id="dni" />
+    <p id="respu1">Por supuesto, así es</p>
+
+    <button type="button" onclick="calcularLetraDni();">calcular</button>
+    <button type="button" onclick="document.getElementById('respu0').innerHTML=document.getElementById('respu2').innerHTML"></button>
+</body>
+</html>

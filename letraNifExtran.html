@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <h1>Calcula web</h1>
+</head>
+<script>
+    
+    function calcularLetraDni(){
+
+        const letras=[ "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J",
+         "Z", "S", "Q", "V", "H", "L", "C", "K", "E" ];
+         const letras_extr = Array(0, 10000000, 20000000);
+         // input's
+        const LETRA_EXT = document.getElementsByName("extr");
+        const DNI = document.getElementById("dni");
+        const DG = document.getElementById("dg");
+        // calculo de dg
+        var resto = 0;
+
+        //0.- obtener letra de extranjero
+        var letra_extr = "0";
+        // factor de extranjero 0 -> X ; 1 -> Y ; 2 -> Z
+        var izquierda = 0;
+        var _letra_extr = "";
+        for ( i=0 ; i<LETRA_EXT.length ; i++) {
+            if ( LETRA_EXT[i].checked ) {
+                izquierda = letras_extr[i];
+                _letra_extr = LETRA_EXT[i].value 
+            }    
+        }
+/*         if ( LETRA_EXT[0].checked && LETRA_EXT[0].value == "X" ){
+            izquierda = 0;
+        } else
+        if ( LETRA_EXT[1].checked  && LETRA_EXT[1].value == "Y" ){
+            izquierda = 10000000;
+        } else
+         if ( LETRA_EXT[2].checked  && LETRA_EXT[2].value == "Z" ){
+            izquierda = 20000000;
+        } */
+
+        //1.- obtener dni de la caja 
+        var dni = DNI.value;
+        console.log("dni ="+dni);
+        var dni_num = parseInt(dni) + izquierda;
+ 
+ // con la validacion para extranjero hay que comprobar que el dni no sea > de 7 posiciones
+        if ( _letra_extr != "" && dni_num > 9999999 || dni_num > 99999999 ){
+            console.log("***  Error  *** dni demasiado grande   ="+dni_num);
+        } else
+        if ( _letra_extr == "" && dni_num > 99999999 ){
+            console.log("***  Error  *** dni demasiado grande   ="+dni_num);
+        }
+        console.log("div ="+dni_num);
+ 
+        //2.- calcular el d.c. nif
+/*      var letra = dni_num / 23;
+        var letra = Math.abs(letra);
+        console.log("letra ="+letra);
+        resto = dni_num - (letra * 23);
+*/
+        
+        resto = dni_num % 23;
+
+        //3.- mostrar el resultado
+//      console.log("cociente =" + letra + " resto ="+ resto);
+        console.log(" resto ="+ resto);
+        const _EXTR = document.getElementById("_extr");
+        const _NUM = document.getElementById("_num");
+        const _DG = document.getElementById("_dg");
+
+
+        _EXTR.innerHTML = _letra_extr;
+        _NUM.innerHTML = dni_num;
+        _DG.innerHTML = letras[resto];
+        alert("extranjero ="+_letra_extr + "  dg =" + letras[resto]);
+        
+    }
+</script>
+<body>
+
+    <h1 style="color:darkblue; font-size:32px;">Cálculo de digito de control de identificación España</h1>
+
+
+    <label>X
+        <input type="checkbox" name="extr" value="X">
+    </label>
+
+    <br>
+    <label>Y
+        <input type="checkbox" name="extr" value="Y">
+    </label>
+    
+    <span>
+        <input type="number" id="dni" />
+        <input type="text" id="dg" />
+    </span>    
+    <br>
+
+    <label>Z
+        <input type="checkbox" name="extr" value="Z">
+    </label>
+    <br>
+
+    <button type="button" onclick="calcularLetraDni();">calcular</button>
+
+    <p>
+        <span>Salida de validación</span>
+        <br>
+        <label id="_extr"></label><span>-</span>
+        <label id="_num"></label><span>-</span>
+        <label id="_dg"></label>
+    </p>
+
+</body>
+</html>
