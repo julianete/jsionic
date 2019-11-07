@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <h1>Calcula web</h1>
+</head>
+<script>
+
+    function calcularIMC() {
+
+        // tramos del imc y resultante
+        // *PDTE*: imagen de resultante
+
+        const TRAMOS_IMC = Array(16, 18, 25, 31, 100);
+        const LITERAL_SP = Array(1, "desnutrido", 2, "delgado", 3, "ideal",
+            4, "sobrepeso", 5, "obeso");
+
+        const IMG = Array(1, "huesitos.img", 2, "huesos.img", 3, "estilizado.img",
+            4, "gordito_sobrepeso.jpeg", 5, "hommer_tumbado.png");
+            
+        const URL_WIKI = "https://es.wikipedia.org/wiki/%C3%8Dndice_de_masa_corporal";
+
+        // input's
+        const ALTURA = document.getElementById("altura");
+        const PESO = document.getElementById("peso");
+
+        //1.- obtener datos altura y peso de la cajas
+        var _altura = parseFloat(ALTURA.value);
+        var _peso = parseFloat(PESO.value);
+
+        console.log("_altura =" + _altura);
+        console.log("_peso =" + _peso);
+
+        var _literal_resultante = "";
+        var _imagen_resultante = "";
+        var _indice_mc = 0.0;
+        var _indice_tbl = -1;
+
+        //2.- calcular el indice mc
+        // y obtener literal e imagen
+        _indice_mc = _peso / ( _altura ^ 2 );
+        console.log("imc = " + _indice_mc);
+
+        for (i = 0; i < TRAMOS_IMC.length; i++) {
+            if (_indice_mc < TRAMOS_IMC [ i ]) {
+                _literal_resultante = LITERAL_SP [ i*2+1 ];
+                _imagen_resultante = IMG [ i*2+1 ];
+                _indice_tbl = i;
+                break;
+            }
+        }
+        if ( _indice_tbl == -1){
+            alert(" ** ERROR ** - no se encuentra el valor del imc en TRAMOS_IMC");
+        }
+        //3.- mostrar el resultado
+        console.log(" imc resultante = " + _indice_mc);
+        console.log(" _literal_resultante = " + _literal_resultante);
+        console.log(" _imagen_resultante = " + _imagen_resultante);
+        const _PESO = document.getElementById("_peso");
+        const _ALTURA = document.getElementById("_altura");
+        const _LITERAL = document.getElementById("_literal_imc");
+        const _IMG = document.getElementById("_img");
+
+        _PESO.innerHTML = _peso;
+        _ALTURA.innerHTML = _altura;
+        _LITERAL.innerHTML = _literal_resultante;
+        _IMG.src = _imagen_resultante;
+
+        _LITERAL.innerHTML = _literal_resultante;
+    }
+</script>
+
+<body>
+
+    <h1>Cálculo del índice de masa corporal</h1>
+    <h2>Introducir altura y peso</h2>
+
+    <!-- cajas input para altura y peso-->
+    <div>
+        <p>
+            <label>Altura(m):</label>
+            <input type="number" id="altura"  placeholder="altura en metros" />
+        </p>
+        <p>
+            <label>Peso(kg):</label>
+            <input type="number" id="peso" placeholder="peso en kg." />
+        </p>
+    </div>
+
+    <!-- boton para calcular -->
+    <button type="button" onclick="calcularIMC()">calcular IMC</button>
+
+    <!-- salidas -->
+    <div id="resultados">
+        <span>Salida de IMC</span>
+        <div><span>alt:</span>
+            <label id="_altura"></label>
+            <br>peso:
+            <label id="_peso"></label>
+            <p><label id="_literal_imc"></label></p>
+        </div>
+        <img id="_img" src=""></img>
+    </div>
+
+    <div>
+        <label>Más información:</label>
+        <a href="https://es.wikipedia.org/wiki/%C3%8Dndice_de_masa_corporal">wikipedia imc</a>
+    </div>
+    <div>
+        <label>fórmula:</label>
+        <img src="./formulaIMC.svg"> 
+    </div>
+
+
+</body>
+
+</html>
