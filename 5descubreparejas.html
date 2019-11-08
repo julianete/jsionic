@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="parejas incluye librería de Albert González - easytimer">
     <meta name="author" content="Jet">
-    <script type="javascript" href="./easytimer/easytimer.js/dist/easytimer.js"></script>
+    <script src="dist/easytimer.js"></script>
     <!-- <script src="dist/examples.min.js"> </script> -->
     <title>
         WEB CON JS
@@ -43,14 +43,16 @@
 
             //*OK* - si la pareja ya está seleccionada,
             //ocultar para empezar (i a 0)
-            if (i_pareja == 2) {
-                Aimagen[0].style.visibility = 'hidden';
-                Aimagen[1].style.visibility = 'hidden';
-                Aimagen[0] = null;
-                // Aimagen [1] = null; //no hace falta, lo asiga en el sgte if
-                // vuelve a empezar
-                i_pareja = 0;
-            }
+
+            // ESTO SE HARA EN LA FINALIZACION DEL COUNTDOWN
+            /*  if (i_pareja == 2) {
+                 Aimagen[0].style.visibility = 'hidden';
+                 Aimagen[1].style.visibility = 'hidden';
+                 Aimagen[0] = null;
+                 // Aimagen [1] = null; //no hace falta, lo asiga en el sgte if
+                 // vuelve a empezar
+                 i_pareja = 0; */
+
             // *OK* - control de la visibilidad de la pareja de imágenes
             //       para el caso de la primera o la segunda se guardan ambas
             //       en el caso de la segunda se ocultan la pareja de img
@@ -80,44 +82,45 @@
                     // *TO-DO* - ENLAZAR A URL DE EXITO
                     /* window.open("."); */
                 }
+                // *TO-DO* - temporizador que llame a borrar imágenes
+
+                //crear Timer()
+                //var timer = new easytimer.Timer();
+                var timer = new Timer();
+
+                // *TO-DO* localizando cuál es el formato a utilizar
+                // CONTANDO DESDE 1 A 3 ???
+                /* timer.start({
+                    precision: 'seconds',
+                    startValues: { seconds: 1 },
+                    target: { seconds: 3 }
+                }); */
+
+                // CUENTA ATRAS -> ESTE PARECE EL NUESTRO PARA DEJAR LAS IMAGENES UNOS SEGUNDOS
+
+                timer.start({
+                    countdown: true,
+                    startValues: { seconds: 30 }
+                });
+                const segundos = document.getElementById("s");
+                //mostrar inicio segundos
+                segundos.innerHTML = timer.getTimeValues().toString();
+                //mostrar countdown
+                timer.addEventListener('secondsUpdated', function (e) {
+                    segundos.innerHTML = timer.getTimeValues().toString();
+                });
+                // callback con fin de countdown
+                timer.addEventListener('targetAchieved', function (e) {
+                    Aimagen[0].style.visibility = 'hidden';
+                    Aimagen[1].style.visibility = 'hidden';
+                    Aimagen[0] = null;
+                    // Aimagen [1] = null; //no hace falta, lo asiga en el sgte if
+                    // vuelve a empezar
+                    i_pareja = 0;
+                });
             }
-            // *TO-DO* - temporizador que llame a borrar imágenes
 
-            //crear Timer()
-            var timer = new easytimer.Timer();
-
-            // *TO-DO* localizando cuál es el formato a utilizar
-            // CONTANDO DESDE 1 A 3 ???
-            /* timer.start({
-                precision: 'seconds',
-                startValues: { seconds: 1 },
-                target: { seconds: 3 }
-            }); */
-
-            // CUENTA ATRAS -> ESTE PARECE EL NUESTRO PARA DEJAR LAS IMAGENES UNOS SEGUNDOS
-
-            timer.start({
-                countdown: true,
-                startValues: { seconds: 30 }
-            });
-            const segundos = document.getElementById("s");
-            //mostrar inicio segundos
-            segundos.innerHTML= timer.getTimeValues().toString();
-            //mostrar countdown
-            timer.addEventListener('secondsUpdated', function (e) {
-                segundos.innerHTML= timer.getTimeValues().toString();
-            });
-// callback con fin de countdown
-            timer.addEventListener('targetAchieved', function (e) {
-                Aimagen[0].style.visibility = 'hidden';
-                Aimagen[1].style.visibility = 'hidden';
-                Aimagen[0] = null;
-                // Aimagen [1] = null; //no hace falta, lo asiga en el sgte if
-                // vuelve a empezar
-                i_pareja = 0;
-            });
-
-            function quitaParejaImagenes(){
+            function quitaParejaImagenes() {
                 Aimagen[0].style.visibility = 'hidden';
                 Aimagen[1].style.visibility = 'hidden';
                 Aimagen[0] = null;
@@ -134,18 +137,18 @@
     <table id="tabla">
         <tr>
             <td>
-                <img src="delgado.jpg">
+                <img src="./imgimc/delgado.jpg">
             </td>
             <td>
-                <img src="pantera.jpg">
+                <img src="./imgimc/pantera.jpg">
             </td>
         </tr>
         <tr>
             <td>
-                <img src="delgado.jpg">
+                <img src="./imgimc/delgado.jpg">
             </td>
             <td>
-                <img src="pantera.jpg">
+                <img src="./imgimc/pantera.jpg">
             </td>
         </tr>
     </table>
