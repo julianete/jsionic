@@ -2,10 +2,15 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="parejas incluye librería de Albert González - easytimer">
+    <meta name="author" content="Jet">
     <h1>Calcula IMC</h1>
 </head>
-<script>
-
+    <script type="javascript" href="./easytimer/easytimer.js/dist/easytimer.js"></script>
+    <script>
     function calcularIMC() {
 
         //mejora con hook sobre IMC.html
@@ -24,8 +29,8 @@
             4, "gordito_sobrepeso.jpeg", 5, "hommer_tumbado.png");
 
         const URL_WIKI = "https://es.wikipedia.org/wiki/%C3%8Dndice_de_masa_corporal";
-
-
+        
+        
         // input's
         const ALTURA = document.getElementById("altura");
         const PESO = document.getElementById("peso");
@@ -44,7 +49,7 @@
 
         //2.- calcular el indice mc
         // y obtener literal e imagen
-        _indice_mc = _peso / (_altura ^ 2);
+        _indice_mc = _peso / (_altura * _altura); // puede ser también math.pow(2, _altura)
         console.log("imc = " + _indice_mc);
 
         for (i = 0; i < TRAMOS_IMC.length; i++) {
