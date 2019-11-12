@@ -42,7 +42,14 @@
             var dimension = FILAS * COLUMNAS;
             var td_actual;
 
-            lista_numeros.sort(function (a, b) { return a - b; })
+            console.log("lista_numeros = " + lista_numeros);
+
+            // probar el orden descendente
+            lista_numeros.sort(function (a, b) { return b - a; });
+
+            // probar reverse...
+            console.log("lista_numeros = " + lista_numeros);
+            lista_numeros.reverse;
 
             for (i = 0; i < dimension; i++) {
                 td_actual = lista_tds[i];
@@ -76,7 +83,19 @@
 
             pintarCarton();//dibujo la tabla, el cartón, la estructura
             generarListaNumeros(); // obtengo la lista de numeros del cartón
-            rellenarCarton();//relleno con los núms. de la lista
+            rellenarCarton(); //relleno con los núms. de la lista
+
+        }
+
+        function sacaBola() {
+
+            // sacar bola y comprobar si el carton la tiene
+
+            dibujarGif();
+            obtenerNumAlea(); // cuidado con los repetidos
+            generarDibujoMuestraBola();
+
+            comprobarCarton();
 
         }
 
@@ -91,6 +110,21 @@
         }
 
     </script>
+    <style>
+        body {
+            border: dimgrey;
+        }
+
+        td {
+            width: 6em;
+            height: 4em;
+            text-align: center;
+            color: darkorange;
+            text-decoration: green;
+
+            border: dashed;
+        }
+    </style>
 </head>
 
 <body>
