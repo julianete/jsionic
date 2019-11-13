@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <script>
         // *TO-DO*
-        // 1.- salida del tablero ordenada 
-        // 2.- style de los td's 
+        // 1.- salida del tablero ordenada
+        // 2.- style de los td's
+        // ciclo de extraer bolas 
+        // 3.- imagen BOMBO
+        // 4.- mostrar bola(img si hay también)
+        // 5.- quitar NUM DEL CARTON Y QUITAR NUM DE LA LISTA DE EXTRAIDOS
+        // 6.- QUITAR LA BOLA DE LA VISTA
 
         const FILAS = 3;
         const COLUMNAS = 5;
         var lista_numeros;
+        var lista_numExtraidos;
+
+        // INICIAR PROCESO
         window.onload = generarCarton;
 
         function pintarCarton() {
+
             var tabla = document.getElementById("carton");
             var fila_nueva;
             var celda_nueva;
@@ -23,11 +32,11 @@
                     fila_nueva.appendChild(celda_nueva);
                 }
                 tabla.appendChild(fila_nueva);
+
             }
         }
 
         //incluir fx que indique si el aleatorio está ya en la lista
-
         function isRepetido(num_aleatorio) {
             /* var repetido = false;
             repetido = lista_numeros.includes (num_aleatorio);
@@ -79,33 +88,133 @@
 
         }
 
+        function genererarNumeroAleatorio(lim_inferior, lim_superior) {
+
+            var num_aleatorio = 0;
+            var n1 = Math.random(); //entre 0 y 1
+            num_aleatorio = (n1 * (lim_superior - lim_inferior + 1)) + lim_inferior;
+            num_aleatorio = Math.ceil(num_aleatorio); //redondeo
+            return num_aleatorio;
+
+        }
+
         function generarCarton() {
+
+            quitarBombo();  //apagar bombo
 
             pintarCarton();//dibujo la tabla, el cartón, la estructura
             generarListaNumeros(); // obtengo la lista de numeros del cartón
             rellenarCarton(); //relleno con los núms. de la lista
 
+            //proceso de sacar bolas
+            //sacaBola();
+
+        }
+        function dale() {
+            sacaBola();
         }
 
         function sacaBola() {
 
-            // sacar bola y comprobar si el carton la tiene
+            var numBola;
+            var ii; //  indice para buscar en extraidos
 
-            dibujarGif();
-            obtenerNumAlea(); // cuidado con los repetidos
-            generarDibujoMuestraBola();
+            // CARGAR LA TABLA DE EXTRAIDOS (PDTES) 
+            lista_numExtraidos = Array();
+            var i = 0;
+            while (i < 90) { lista_numExtraidos.push(++i); }
 
-            comprobarCarton();
+            // sacar bola:
+            // comprobar si el carton la tiene . . .
+            // . . .  hasta final de bombo o bingo
+            // do {
+
+            dibujarBombo();
+            //activar tmp para 1 segundos que quite el dibujo
+            //setTimeout(quitarBombo, 1000);
+            setTimeout(
+                function () {
+                    numBola = obtenerNumAlea(); // cuidado con los repetidos
+
+                    // guardar numero en lista de extraidos
+                    
+                    // PARA QUE EL NUM ALEA SEA LO MAS PARECIDSO A UN BOMBO
+                    // EL NUM DE BOLAS DEBE SER UNA MENOS CADA VEZ QUE SE EXTRAE
+                    //       --> lista_numExtraidos.push(numBola);
+                    //QUITAR LA BOLA EXTRAIDA DE LA LISTA DE EXTRAIDOS (PDTES)
+                    
+                    ii = lista_numExtraidos.indexOf(numBola);
+                    lista_numExtraidos.splice (ii,1); // CUIDADO, SOLO UN indice de la tabla 
+                    
+
+                    // quita bombo y muestra la bola
+                    quitarBombo();
+                    generarDibujoMuestraBola(numBola);
+
+                    //COMPROBAR SI LA BOLA ESTA EN LA LISTA Y ENTONCES LIMPIAR LA CASILLA
+                    if (lista_numeros.includes(numBola)) {
+                        // si está en el cartón, quitarla
+                        limpiarCarton(numBola);
+                    }
+                } , 1000);
+
+            // } while (lista_numExtraidos.length < 100);
 
         }
 
-        function genererarNumeroAleatorio(lim_inferior, lim_superior) {
+        //pintar bombo
+        function dibujarBombo() {
+            const dibujo = document.getElementById("imgBombo");
+            dibujo.style.visibility = "visible";
+        }
 
-            var num_aleatorio = 0;
-            var n1 = Math.random(); //entre 0 y 1
-            num_aleatorio = (n1 * (lim_superior - lim_inferior + 1)) + lim_inferior
-            num_aleatorio = Math.ceil(num_aleatorio); //redondeo
-            return num_aleatorio;
+        //apagar bombo
+        function quitarBombo() {
+            const dibujo = document.getElementById("imgBombo");
+            dibujo.style.visibility = "hidden";
+        }
+
+        //obtener num bola del bombo
+        function obtenerNumAlea() {
+
+            //extraer numero para bola hasta comprobar que no está extraido;
+            var numBola;
+            do {
+                // BOMBO ENTRE 0 Y LONGITUD DE EXTRAIDOS
+                // numBola = genererarNumeroAleatorio(0, 90);
+                numBola = genererarNumeroAleatorio(0, lista_numExtraidos.length);
+                console.log ( " bola aleatoria "+ numBola );
+            } while (!lista_numExtraidos.includes(numBola));
+
+            return numBola;
+        }
+
+        /*
+        function isRepetido(num_aleatorio) {
+            // var repetido = false; repetido = lista_numeros.includes (num_aleatorio); return repetido; 
+            return lista_numeros.includes(num_aleatorio);
+        }
+        */
+        function generarDibujoMuestraBola(numBola) {
+            const dibujoBola = document.getElementById("dibujoBola");
+            dibujoBola.innerHTML = numBola;
+        }
+
+        function limpiarCarton(numBola) {
+
+            //buscar en el carton y reemplazar la td/imagen/texto por X o darle la vuelta . . . 
+            var lista_tds = document.querySelectorAll("td");
+            var i = 0;
+            var encontrado = false;
+            //buscar mientras no encontremos la bola en la tabla
+            while (i < lista_tds.length && !encontrado) {
+                if (lista_tds[i].innerHTML == numBola) {
+                    //quitar / ocultar número del cartón
+                    lista_tds[i].innerHTML = "X";
+                    encontrado = true;
+                }
+                i++;
+            }
 
         }
 
@@ -121,8 +230,23 @@
             text-align: center;
             color: darkorange;
             text-decoration: green;
-
+            border-radius: 12;
             border: dashed;
+        }
+
+        .bola {
+            width: 7em;
+            height: 6em;
+            text-align: center;
+            color: firebrick;
+            background-color: floralwhite;
+            /* text-decoration: green; */
+            border: medium;
+        }
+        .boton {
+            text-shadow: greenyellow;
+            text-emphasis: initial;
+            size: 4em;
         }
     </style>
 </head>
@@ -130,6 +254,16 @@
 <body>
     <table id="carton">
     </table>
+    <button type="button" class="boton" onclick="dale();">Dale!</button>
+    <div id="dibujoBombo">
+        <img id="imgBombo" src="bombo.gif" />
+    </div>
+    <div id="dibujoBola" class="bola">
+        <label id="numBola"></label>
+        <!-- <img id="imgBola" src="bola.gif" /> -->
+    </div>
+
+
 </body>
 
 </html>
