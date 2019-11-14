@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        var xmlHttp;
+        // callback de onload
+        window.onload = cargarInfoSitio;
+
+        //EJERCICIO - AJAX - JSON - API GOOOOOOOOGLE
+
+        //1 Obtener API propia https://developers.google.com/places/web-service/get-api-key
+        //2 Elegir un lugar ID_LUGAR https://developers.google.com/places/web-service/place-id
+        //2 Instalar FIREFOX
+        //3 Instalar extensión CORS Everywhere para ese navegador
+        //4 Activar extensión
+
+        const APIKEYGOOGLEPLACES = "AIzaSyDhOVDFDksmdnN30SB1rO2uoft60nINk8U";   // mediatreinta
+        const ID_PLACE_BUENACHE = "ChIJDfOZtcbqZw0RON_k30bX7z8";
+        const ID_PLACE = "ChIJPQW4uEdCQA0RTdhgajf8y7k";
+        /*
+        Calle Ermita Vieja, 10, 16114 Buenache de Alarcón, Cuenca ---> https://goo.gl/maps/1n1LDuXaHNwN9UV18
+        Buenachu placeID : ChIJDfOZtcbqZw0RON_k30bX7z8
+        */
+        //const ID_LUGAR = "ChIJd3WcsXiKQQ0R6QCqzzeHf_Y";
+        //const CLAVE_API_GOOGLE_PLACES = "AIzaSyC4TNOihruokBfNZeXuCBzwxrcDnPhNKqI"
+        const URI = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + ID_PLACE + "&key=" + APIKEYGOOGLEPLACES;
+
+        console.log(" URI " + URI);
+
+        function cargarInfoSitio() {
+            console.log(" cargarInfoSitio() ... entra   ");
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = procesarEventosRecibir;
+            xmlHttp.open('GET', URI, true);
+            xmlHttp.send(null);
+            console.log(" cargarInfoSitio() ... sale   ");
+        }
+        function procesarEventosRecibir() {
+
+            console.log(" procesarEventosRecibir() ... entra   ");
+            console.log(" xmlHttp.readyState ... " + xmlHttp.readyState);
+
+            if (xmlHttp.readyState == 4) {
+                console.log(" xmlHttp.status ... " + xmlHttp.status);
+
+                if (xmlHttp.status == 200) {
+
+                    var cuerpo = xmlHttp.responseText;
+                    console.log(" cuerpo ... " + cuerpo);
+                    var objeto_js = JSON.parse(cuerpo);
+                    console.log(" objeto_js ... " + objeto_js);
+                    if (objeto_js.error_message) {
+                        console.log(" error de google ... " + objeto_js.error_message);
+                    }
+
+                    // destripar y cargar vista en lista comentarios
+                    cargarListaComentarios(objeto_js);
+
+                    console.log("OPINIONES " + objeto_js.result.reviews);
+                    console.log("NOMBRE AUTOR " + objeto_js.result.reviews[1].author_name);
+                } else {
+                    console.log("error " + xmlHttp.status);
+                }
+            }
+            console.log(" procesarEventosRecibir() ... sale   ");
+        }
+        function cargarListaComentarios(jsonPLACE) {
+            // recibe parametro en formato JSON
+            const ulHook = document.getElementById("hookLista");
+            for (const clave in jsonPLACE) {
+
+                if (jsonPLACE.hasOwnProperty(clave)) {
+
+                    const texto = jsonPLACE[clave];
+                    liClave = document.createElement("li");
+                    liClave.innerHTML = texto;
+                    ulHook.appendChild(liClave);
+
+                }
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+    <div id="datos">
+        <ul id="hookLista"></ul>
+    </div>
+</body>
+
+</html>
