@@ -7,6 +7,45 @@
         // callback de onload
         window.onload = cargarInfoSitio;
 
+        const noPintarVista = Array(
+            "address_components",
+            "adr_address",
+            "formatted_address",
+            "formatted_phone_number",
+            "photo_reference",
+            "geometry"
+        );
+
+        const siPintarVista = Array(
+            "icon",
+            "name",
+            "photos",
+            "html_attributions",
+            "rating",
+            "reviews",
+            "author_name",
+            "profile_photo_url",
+            "rating",
+            "relative_time_description",
+            "text",
+            ""
+        );
+
+        const tipoHtml = {
+
+            "icon" : {   } ,
+            "name" : {   } ,
+            "photos" : {  },
+            "html_attributions" : {  },
+            "rating" : {  },
+            "reviews" : {  },
+            "author_name":{  },
+            "profile_photo_url": {  },
+            "rating": {  },
+            "relative_time_description": {  },
+            "text": {  },
+        }
+
         //EJERCICIO - AJAX - JSON - API GOOOOOOOOGLE
 
         //1 Obtener API propia https://developers.google.com/places/web-service/get-api-key
@@ -29,20 +68,20 @@
         console.log(" URI " + URI);
 
         function cargarInfoSitio() {
-            console.log(" cargarInfoSitio() ... entra   ");
+            //console.log(" cargarInfoSitio() ... entra   ");
             xmlHttp = new XMLHttpRequest();
             xmlHttp.onreadystatechange = procesarEventosRecibir;
             xmlHttp.open('GET', URI, true);
             xmlHttp.send(null);
-            console.log(" cargarInfoSitio() ... sale   ");
+            //console.log(" cargarInfoSitio() ... sale   ");
         }
         function procesarEventosRecibir() {
 
-            console.log(" procesarEventosRecibir() ... entra   ");
-            console.log(" xmlHttp.readyState ... " + xmlHttp.readyState);
+            //    console.log(" procesarEventosRecibir() ... entra   ");
+            //    console.log(" xmlHttp.readyState ... " + xmlHttp.readyState);
 
             if (xmlHttp.readyState == 4) {
-                console.log(" xmlHttp.status ... " + xmlHttp.status);
+                //  console.log(" xmlHttp.status ... " + xmlHttp.status);
 
                 if (xmlHttp.status == 200) {
 
@@ -55,38 +94,100 @@
                     }
 
                     // destripar y cargar vista en lista comentarios
-                    cargarListaComentarios(objeto_js);
+                    cargarListaComentarios(objeto_js.result);
 
-                    console.log("OPINIONES " + objeto_js.result.reviews);
-                    console.log("NOMBRE AUTOR " + objeto_js.result.reviews[1].author_name);
+                    /*                 console.log("OPINIONES " + objeto_js.result.reviews);
+                                       console.log("NOMBRE AUTOR " + objeto_js.result.reviews[1].author_name); */
                 } else {
                     console.log("error " + xmlHttp.status);
                 }
             }
-            console.log(" procesarEventosRecibir() ... sale   ");
+            //console.log(" procesarEventosRecibir() ... sale   ");
         }
-        function cargarListaComentarios(jsonPLACE) {
+        function cargarListaComentarios(resultado) {
             // recibe parametro en formato JSON
             const ulHook = document.getElementById("hookLista");
-            for (const clave in jsonPLACE) {
 
-                if (jsonPLACE.hasOwnProperty(clave)) {
+            for (const clave in resultado) {
 
-                    const texto = jsonPLACE[clave];
-                    liClave = document.createElement("li");
-                    liClave.innerHTML = texto;
-                    ulHook.appendChild(liClave);
+                const objeto = resultado[clave];
+                const li = document.createElement("li");
+                ulHook.appendChild(li);
+
+                console.log("tipo de objeto de jsonPlace => " + typeof objeto)
+
+                //if (typeof objeto == 'array' || typeof objeto == 'object') {
+                if (typeof objeto == 'object') {
+
+                    li.innerHTML = clave;
+                    //liClave.innerHTML = clave.concat("=>", objeto);
+                    // evaluar contenido complejo para cada clave
+                    vistaObj(objeto, li);
+
+                } else {
+
+                    li.innerHTML = clave.concat("=>", objeto);
+                    //ulHook.appendChild(li);
 
                 }
             }
-
         }
+
+        function vistaObj(objeto, liPadre) {
+
+            //SI SDEBE IR A VISTA -> siPintarVista.includes()
+
+            // pintar la eqiqueta correspondiente en html
+            const vista = liPadre.innerHTML;
+            var pintarPadre;
+            var pintarHijo;
+
+            pintarPadre = siPintarVista.includes(vista);
+            if (pintarPadre) {
+                console.log(vista + ' (PAD) ** pintar este objeto ** ');
+            }
+
+            const lista = document.createElement("ul");
+            liPadre.appendChild(lista);
+
+            for (const clave in objeto) {
+
+                pintarHijo = siPintarVista.includes(clave);
+                if (pintarHijo) {
+                    console.log(clave + '       ** pintar este objeto ** (HIJO) ');
+                }
+                const ele = objeto[clave];
+
+/*                 //QUITAR SI EXTENUANTE
+                console.log("tipo de objeto de jsonPlace => " + typeof ele) */
+
+                const li = document.createElement("li");
+                lista.appendChild(li);
+
+                if (typeof ele != 'object') {
+
+                    li.innerHTML = clave.concat("=>", ele);
+
+                } else {
+
+                    li.innerHTML = clave;
+
+                    //rellenar objeto
+                    vistaObj(ele, li);
+
+                }
+            }
+        }
+
     </script>
 </head>
 
 <body>
     <div id="datos">
         <ul id="hookLista"></ul>
+    </div>
+    <div id="datos1">
+        <table id="hookTabla"></table>
     </div>
 </body>
 
