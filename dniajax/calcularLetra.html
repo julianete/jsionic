@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <h1>Calcula web</h1>
+</head>
+<script>
+
+    /*  const URI = "http://10.1.2.10:8081/cfticionic/calculaletra/5656"; */
+    const URI_SERVICE_DNI = "http://10.1.2.10:8081/cfticionic/calculaletra/";
+
+     var xmlHttp = new XMLHttpRequest();
+
+/*     function llamarAlServidor(dni) { */    
+
+    function obtenerDniIntroducido(dni) {
+
+        console.log(" llamarAlServidor() ... entra   ");
+        xmlHttp.onreadystatechange = procesarEventosRecibir;
+
+        xmlHttp.open('GET', URI_SERVICE_DNI + dni, true);
+        xmlHttp.send(null); //get sin datos en body
+        console.log(" llamarAlServidor() ... sale   ");
+
+    }
+
+    function procesarEventosRecibir() {
+
+        if (xmlHttp.readyState == 4) {
+
+            if (xmlHttp.status == 200) {
+
+                var cuerpo = xmlHttp.responseText;
+                console.log(" cuerpo ... " + cuerpo);
+                var objeto_js = JSON.parse(cuerpo);
+                console.log(" objeto_js ... " + objeto_js);
+                /* if (objeto_js.error_message) {
+                    console.log(" error de google ... " + objeto_js.error_message);
+                } */
+
+                // destripar y cargar vista en lista comentarios
+                cargarLetra(objeto_js);
+
+            } else {
+                console.log(" Error en el servicio ... " + xmlHttp.status);
+            }
+        } else {
+            console.log(" En proceso - xmlHttp.status ... " + xmlHttp.readyState);
+        }
+    }
+
+    function calcularLetraDni() {
+
+        //1 - obtener dni introducido
+        //const LETRA = document.getElementsByName("dg");
+        const DNI = document.getElementById("dni");
+        numdni = DNI.value;
+        // calculo de dg
+
+        obtenerDniIntroducido(numdni);
+
+    }
+
+    function cargarLetra(datos){
+
+        var dni = datos.numero;
+        var letra = datos.letra;
+
+        const DNI = document.getElementById("_num");
+        const LETRA = document.getElementById("_dg");
+
+        DNI.innerHTML=dni;
+        LETRA.innerHTML=letra;
+
+    }
+</script>
+
+<body>
+
+    <h1 style="color:darkblue; font-size:32px;">Cálculo letra /ajax (España)</h1>
+
+    <span>
+        <input type="number" id="dni" />
+        <!-- <input type="text" id="dg" /> -->
+    </span>
+    <br>
+
+    <button type="button" onclick="calcularLetraDni();">calcular</button>
+
+    <p>
+        <span>Salida de validación </span><label id="_num"></label><span>-</span><label id="_dg"></label>
+    </p>
+
+</body>
+
+</html>
