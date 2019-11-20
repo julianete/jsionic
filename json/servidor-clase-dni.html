@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+</head>
+<script>
+    {
+
+
+        const URI_SERVICE = "http://10.1.2.10:8081/cfticionic/dni";
+
+        var xmlHttp;
+        var midni;
+
+        class Dni {
+            constructor(n, l) {
+                this.numero = n;
+                this.letra = l;
+            }
+            verDni() {
+                console.log(this);
+                console.log("dni:" + this.numero + "-" + this.letra);
+            }
+            toString() {
+                return JSON.stringify(this);
+            }
+        }
+
+        function grabarDni() {
+            const DNI = document.getElementById("dni");
+            const LETRA = document.getElementById("letra");
+            console.log(" grabarDni() ... entra   ");
+            xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = comprobarEstado;
+            xmlHttp.open('POST', URI_SERVICE, true);
+            //completar petición pOsT
+            midni = new Dni(DNI.value, LETRA.value);
+            console.log(midni);
+            xmlHttp.setRequestHeader("content-type", "application/json");
+            xmlHttp.send(midni.toString()); //post: datos en body
+
+            console.log(" grabarDni() ... sale   ");
+        }
+        function comprobarEstado() {
+
+            if (xmlHttp.readyState == 4) {
+
+                if (xmlHttp.status == 201) {
+
+                    var cuerpo = xmlHttp.responseText;
+                    console.log(" cuerpo ... " + cuerpo);
+                    salida();
+
+                } else {
+                    console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
+                }
+            } else {
+                console.log(" En proceso - xmlHttp.status ... " + xmlHttp.readyState);
+            }
+        }
+        function salida() {
+            const RET = document.getElementById("retorno");
+            RET.innerHTML = xmlHttp.status;
+        }
+    }
+</script>
+
+<body>
+    <h1 style="color:darkblue; font-size:32px;">Alta POST - Dni - server / ajax</h1>
+
+    <span>
+        <input type="number" id="dni">
+        <input type="text" id="letra">
+    </span>
+    <br>
+    <div>
+        <button type="button" onclick="grabarDni();">Enviar/Grabar</button>
+        <p>
+            <span>Salida de Alta/Grabación</span>
+            <label id="retorno"></label>
+        </p>
+    </div>
+</body>
+
+</html>

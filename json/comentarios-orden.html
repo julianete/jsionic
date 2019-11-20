@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
 
 </head>
-<script type="text" src="comentarios.txt" id="fichero">
-</script>
+<script type="text/javascript" src="comentarios.txt" id="fichero"></script>
 <script>
     var fichero;
 
@@ -93,19 +92,22 @@
 
                 if (typeof ele != 'object') {
                     li.innerHTML = clave.concat("=>", ele);
-                    mostrarElemento(ele);
+                    mostrarElemento(ele, clave);
                 } else {
                     li.innerHTML = clave;
                     //rellenar objeto
                     vistaObj(ele, li);
+            //console.log("bucle tipoHtml");
+            //console.log(tipoHtml);
+            //console.log("bucle clave_padre:" + clave);
                     var tipo_html = tipoHtml[clave];
-                    if (tipo_html.vista == "si"){
-                        if (tipo_html.label == "si"){
+                    if (tipo_html.vista == "si") {
+                        if (tipo_html.label == "si") {
                             var label = createElement("label");
                             label.innerHTML = ele;
                             lista.appendChild(label);
-                        }                    
-                        if (tipo_html.img == "si"){
+                        }
+                        if (tipo_html.img == "si") {
                             var img = createElement("img");
                             img.src = ele;
                             lista.appendChild(img);
@@ -113,7 +115,26 @@
                     }
                 }
             } else {
-                console.log(clave + ' ** NO **  pintar este objeto ** (HIJO) ');
+                //console.log(clave + ' ** NO **  pintar este objeto ** (HIJO) ');
+            }
+        }
+
+        function mostrarElemento(ele, clave_padre) {
+            console.log("fx tipoHtml");
+            console.log(tipoHtml);
+            console.log("fx clave_padre:" + clave_padre);
+            var tipo_html = tipoHtml[clave_padre];
+            if (tipo_html.vista == "si") {
+                if (tipo_html.label == "si") {
+                    var label = document.createElement("label");
+                    label.innerHTML = ele;
+                    lista.appendChild(label);
+                }
+                if (tipo_html.img == "si") {
+                    var img = document.createElement("img");
+                    img.src = ele;
+                    lista.appendChild(img);
+                }
             }
         }
     }
@@ -173,20 +194,20 @@
     */
 
     const tipoHtml = {
-        "result":                       { global: 1 },
-        "icon":                         { vista: "si", img: "si"    },
-        "name":                         { vista: "si", label: "si"  },
-        "photos":                       { vista: "si", img: "si"    },
-        "html_attributions":            { vista: "no", table: "si"  },
-        "rating":                       { vista: "si", img: "estrella" },
-        "reviews":                      { vista: "si", table: "si"  },
-        "author_name":                  { vista: "si", label: "si"  },
-        "author_url":                   { vista: "si", enlace: "si"  },
-        "language":                     { vista:"si",  es: "español", label: "si" },
-        "profile_photo_url":            { vista: "si", img: "si"  },
-        "relative_time_description":    { vista: "si", label: "si"  },
-        "text":                         { vista: "si", label: "si"  },
-        "time":                         { "funcion": "calcula_antiguedad" },
+        "result": { global: 1 },
+        "icon": { vista: "si", img: "si" },
+        "name": { vista: "si", label: "si" },
+        "photos": { vista: "si", img: "si" },
+        "html_attributions": { vista: "no", table: "si" },
+        "rating": { vista: "si", img: "estrella" },
+        "reviews": { vista: "si", table: "si" },
+        "author_name": { vista: "si", label: "si" },
+        "author_url": { vista: "si", enlace: "si" },
+        "language": { vista: "si", es: "español", label: "si" },
+        "profile_photo_url": { vista: "si", img: "si" },
+        "relative_time_description": { vista: "si", label: "si" },
+        "text": { vista: "si", label: "si" },
+        "time": { "funcion": "calcula_antiguedad" },
     }
 
     var texto = {
