@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Hotel Rural San Roque  - Web Oficial -</title>
+        <meta charset="utf-8" content="piedralaves, relax, turismo rural, casa rural, centro de turismo rural, hotel rural, san roque, yoga, actividades, grupos"/>
+        <link href="estilo/estilo2.css" rel="stylesheet"/>
+        <link rel="icon" href="imagenes/logos/fivco.ico" type="image/x-icon" />
+        <script src="script/galeria.js"></script>
+    </head>
+    <body>   
+	<div id="envoltorio">
+        <div id="galeria">
+        <ul id="imagenes">
+            <li class="selected"><img src="galeria/slider/1.jpg" alt="Foto exterior. Bancos de mampostería"/></li>
+            <li class="noselected"><img src="galeria/slider/2.jpg" alt="Interior de la sala grande (sala 2 de 120 m2) Con suelo radiante"/></li>
+            <li class="noselected"><img src="galeria/slider/3.jpg" alt="Foto exterior del jardín con detalle del pozo"/></li>
+            <li class="noselected"><img src="galeria/slider/4.jpg" alt="Hall. Recibidor de 600 m2"/></li>
+            <li class="noselected"><img src="galeria/slider/5.jpg" alt="Exterior de la sala pequeña (sala 1 de 60 m2)"/></li>
+            <li class="noselected"><img src="galeria/slider/7.jpg" alt="Interior de la sala grande con colchonetas"/></li>
+            <li class="noselected"><img src="galeria/slider/8.jpg" alt="Exteriores de la sala grande"/></li>
+            <li class="noselected"><img src="galeria/slider/9.jpg" alt="Panóramica exterior del edifcio principal"/></li>
+            <li class="noselected"><img src="galeria/slider/10.jpg" alt="Cafeteria, sala de estar con chimenea"/></li>
+            <li class="noselected"><img src="galeria/slider/11.jpg" alt="Sala de estar anexa a la cafetería"/></li>
+            <li class="noselected"><img src="galeria/slider/12.jpg" alt="Entrada principal"/></li>
+            <li class="noselected"><img src="galeria/slider/13.jpg" alt="Interior de la sala pequeña (sala 1 de 60 m2)"/></li>
+            <li class="noselected"><img src="galeria/slider/14.jpg" alt="Foto noctura del hall"/></li>
+            <li class="noselected"><img src="galeria/slider/15.jpg" alt="Jardín con barbacoa para las cenas de verano"/></li>
+		<li class="noselected"><img src="galeria/slider/16.jpg" alt="Hab doble con salón y cama de matrimonio"/></li>
+		<li class="noselected"><img src="galeria/slider/17.jpg" alt="Habitacion doble estándar camas individuales"/></li>
+		<li class="noselected"><img src="galeria/slider/18.jpg" alt="Piscina de verano con ducha solar"/></li>
+        </ul>
+        </div>
+        <div id="lonuevo" class="nuevo_invisible">
+		<div id="flechaiz" onclick="foto_anterior();">
+			<div id="imgfi">
+				<img src="imagenes/feciz.png" title="Foto anterior" alt="Selector izquierda"/>
+			</div>
+		</div>
+		<div id="flechader"  onclick="foto_siguiente();">
+			<div id="imgfd">
+				<img src="imagenes/fecder.png" title="Foto siguiente" alt="Selector siguiente" />
+			</div>
+		</div>
+		<div id="env_leyenda">
+			<div id="leyenda">
+				<div id="textoleyenda"></div>
+			</div>
+			<div id="playpause"onclick="play_pause();">
+				<div id="imgplaypause">
+					<img id="boton_play_pause" title="Pausar / reanunadar reproducción automática" src="imagenes/botonpause.png" alt="Selector izquierda"/>
+				</div>
+			</div>
+		</div>
+		<div id="marcador">
+			<div id="contenido_marcador"></div>
+		</div>
+        </div>
+        <nav id="mainmenu">
+             <ul>
+                 <li><a href="#">INICIO</a></li>
+                 <li><a href="instalaciones.html">INSTALACIONES</a></li>
+                 <li><a href="ofertas.html">OFERTAS</a></li>
+                 <li><a href="quever.html">QUÉ VER</a></li>
+                 <li><a href="comollegar.html">CÓMO LLEGAR</a></li>
+                 <li><a href="grupos.html">GRUPOS</a></li>
+                 <li><a href="opiniones.html">OPINIONES</a></li>
+                 <li><a href="contacto.php">CONTACTO</a></li>
+             </ul>
+        </nav>
+        <div id="oculta">
+                    <img src="imagenes/stop.png" alt="Volver a la página" title="Volver a la página" height="100%" width="100%" onclick="descubrefachada();">
+        </div>
+        <div id="cuerpo">
+            <div id="coliz">
+                <div id="coliz1">
+                    <img src="imagenes/start.png" alt="Mostrar galería" height="35%" width="18%" title="Mostrar galería" onclick="tapafachada();">
+                </div>
+                <div id="coliz2">
+                    
+                </div>
+                <div id="coliz3">
+                    <div id="logos">
+                  
+                            <a href="http://www.toprural.com/Casa-rural-habitaciones/Ctr-San-Roque_26341_f.html" target="_blank" >
+                            <img src="imagenes/logos/logotr.png" title="Peril en Toprural" alt="Peril en Toprural" height="12%" width="12%">
+                            </a>
+                            <a href="https://www.facebook.com/ctrsanroque" target="_blank">
+                            <img src="imagenes/logos/logof.png" title="Peril en Facebook" alt="Peril en Facebook" height="12%" width="12%">
+                            </a>
+                            <a href="instalaciones.html#wifi">
+                            <img src="imagenes/logos/wifi.png" title="Wifi gratis" alt="Wifi gratis" height="12%" width="12%">
+                            </a>	
+                           
+                    </div>
+                    <div id="direccion">
+                        PARAJE LOS GUIJUELOS S/N<br>
+                        PIEDRALAVES 05440 ÁVILA <br>
+                        918666433 699069260 <br>
+                        euromorada@gmail.com <br>
+                    </div>
+		    <div id="avisolegal" onclick="veravisolegal();">
+			AVISO LEGAL
+                    </div>
+                </div>
+            </div>
+            <div id="colcent">
+                <div id="colcent1">
+                    
+                </div>
+                <div id="colcent2">
+                    
+                </div>
+                <div id="colcent3">
+                  
+                </div>
+            </div>
+            <div id="colder">
+                <div id="colder1">
+                   
+                    <p>En funcionamiento desde 1999, y a sólo 100 km de Madrid, el Hotel se ubica en plena Sierra de Gredos: un escenario natural único, ideal para sintonizar con la paz y renovar energías.</p>
+                    <p>Por la versatilidad de sus instalaciones, el Hotel es un lugar perfecto para realizar actividades en grupo, reuniones familiares o  simplemente, desconectar.</p>
+                </div>
+                <div id="colder3">
+                </div>
+            </div>
+        </div>
+	
+	</div>
+<div id="warning-message">
+    	<p>ESTA WEB SOLO SE VE EN APAISADO<br><br>
+	¡GIRE SU TELÉFONO O DISPOSITIVO!
+	</p>
+	</div>
+         <script type="text/javascript">
+   dameFlor();
+</script>
+	<img alt="" width="1" height="1" style="display:none" src="http://www.hrsanroque.com/indexcookies.php" />
+    </body>
+</html>
