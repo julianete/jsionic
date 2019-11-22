@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="estilo.css" rel="stylesheet" />
+</head>
+<script>
+    const URI_SERVICE = "http://10.1.2.10:8081/cfticionic/usuariocftic";
+
+    var xmlHttp;
+    var login;
+    // token 1: MH3OOWHWKKO3
+    // token 2: HMFFLHHWKKO3
+
+    class Usuario {
+        constructor(n, l) {
+            this.nombre = n;
+            this.pwd = l;
+            this.token = null;
+        }
+        verUsuario() {
+            console.log(this);
+            console.log("usuario:" + this.numero + "-" + this.pwd + "-" + this.token);
+        }
+        toString() {
+            return JSON.stringify(this);
+        }
+        setToken(valor) {
+            this.token = valor;
+        }
+    }
+    //obtiene los datos del login y llama ajax a servicio
+    function validarLogin() {
+        const nombre = document.getElementById("nombre");
+        const pwd = document.getElementById("pwd");
+        console.log(" login() ... entra   ");
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = comprobarEstado;
+        xmlHttp.open('POST', URI_SERVICE, true);
+        //completar petición pOsT
+        login = new Usuario(nombre.value, pwd.value);
+        console.log(login);
+        xmlHttp.setRequestHeader("content-type", "application/json");
+        xmlHttp.send(login.toString()); //post: datos en body
+
+        console.log("login() ... sale   ");
+    }
+    function comprobarEstado() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                var cuerpo = xmlHttp.responseText;
+                console.log(" Retorno correcto. Cuerpo ... " + cuerpo);
+                guardarToken(cuerpo);
+            } else {
+                console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
+                sacarError();
+            }
+        } else { console.log(" En proceso - xmlHttp.status ... " + xmlHttp.readyState); }
+    }
+    function guardarToken(cuerpo) {
+        login.setToken(cuerpo["token"]);
+        const clave_token = "token";
+        guardarLocal(clave_token, login.token);
+        const _token = document.getElementById("_token");
+        const _clave = document.getElementById("_clave");
+        const _valor = document.getElementById("_valor");
+        _clave.innerHTML = clave_token;
+        _token.innerHTML = login.token;
+
+    }
+    function sacarError(cuerpo) {
+        const RET = document.getElementById("_error");
+        const RET_TXT = document.getElementById("_error_txt");
+        document.getElementById("_clave").innerHTML = login.Usuario;
+        document.getElementById("_valor").innerHTML = login.pwd;
+        RET.innerHTML = xmlHttp.status;
+        RET_TXT.innerHTML = "Error en la llamada al servicio " + URI_SERVICE;
+    }
+    function guardarLocal(clave, valor) {
+        localStorage.setItem(clave, valor);
+        console.log("Token guardado " + clave + "[" + valor + "] = " + verLocal(clave));
+    }
+    function verLocal(clave) {
+        valor = localStorage.getItem(clave);
+        console.log("Token recuperado:" + clave + "-" + valor);
+        return valor;
+    }
+</script>
+
+<body>
+    <h1>APP - Comentarios</h1>
+    <h2>LOGIN</h2>
+    <div>
+        <p class="marco">
+            <label>Introducir nombre de usuario y clave</label>
+            <div class="submarco">
+                <span>Nombre:</span>
+                <input id="nombre" type="text">
+                <span> Pass:</span>
+                <input id="pwd" type="password">
+                <span id="token"></span>
+            </div>
+        </p>
+        <p>
+            <button class="boton" type="button" onclick="validarLogin()">Login</button>
+        </p>
+    </div>
+    <div id="retorno">
+        <br />
+        <label id="_error"></label>        <br />
+        <label id="_error_txt"></label>        <br />
+        <label id="_token"></label>        <br />
+        <label id="_clave"></label>        <br />
+        <label id="_valor"></label>
+    </div>
+</body>

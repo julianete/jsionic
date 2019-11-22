@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="estilo.css" rel="stylesheet" />
+</head>
+<script>
+
+
+    window.onload = obtenerImagenes;
+
+    const URI_SERVICE = "http://10.1.2.10:8081/cfticionic/fotos";
+
+    var xmlHttp;
+    var login;
+    // token 1: MH3OOWHWKKO3
+    // token 2: HMFFLHHWKKO3
+
+    class Imagen {
+        constructor(id, img) {
+            this.id = id;
+            this.img = img;
+        }
+        verFoto() {
+            console.log(this);
+            console.log("id:" + this.id + "-" + this.img);
+        }
+        toString() {
+            return JSON.stringify(this);
+        }
+    }
+    //obtiene los datos del login y llama ajax a servicio
+    function obtenerImagenes() {
+        console.log("obtenerImagenes() ... entra   ");
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = comprobarEstado;
+        xmlHttp.open('GET', URI_SERVICE, true);
+        xmlHttp.send(null); //get: NO datos en body
+        console.log("obtenerImagenes() ... sale   ");
+    }
+    function comprobarEstado() {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                var cuerpo = xmlHttp.responseText;
+                console.log(" ** OK ** ... " + xmlHttp.status);
+                console.log(" Retorno correcto. Cuerpo ... " + cuerpo);
+                guardarImagenes(cuerpo);
+            } else {
+                console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
+                sacarError();
+            }
+        } //else { console.log(" En proceso - xmlHttp.status ... " + xmlHttp.readyState); }
+    }
+    function guardarImagenes(cuerpo) {
+        //añadir las img's en el hook
+        const HOOKIMG = document.getElementById("hookSelector");
+        var listaImg = cuerpo; // .responseText;
+        for (const img in listaImg) {
+            if (listaImg.hasOwnProperty(img)) {
+                var foto = listaImg[img];
+                var imgVista = document.createElement("img");
+                var imgID = document.createElement("label");
+                imgID.innerHTML = foto.nfoto;
+                imgVista.src = foto.ruta;
+                HOOKIMG.appendChild(imgID);
+                HOOKIMG.appendChild(imgVista);
+            }
+        }
+    }
+    function sacarError(cuerpo) {
+        const RET = document.getElementById("_error");
+        const RET_TXT = document.getElementById("_error_txt");
+
+        RET.innerHTML = xmlHttp.status;
+        RET_TXT.innerHTML = "Error en la llamada al servicio " + URI_SERVICE;
+    }
+    function guardarLocal(clave, valor) {
+        localStorage.setItem(clave, valor);
+        console.log("Token guardado " + clave + "[" + valor + "] = " + verLocal(clave));
+    }
+    function verLocal(clave) {
+        valor = localStorage.getItem(clave);
+        console.log("Token recuperado:" + clave + "-" + valor);
+        return valor;
+    }
+</script>
+
+<body>
+    <h1>APP - Comentarios</h1>
+    <h2>LOGIN</h2>
+    <div>
+        <p class="marco">
+            <label>Seleccionar imagen para comentar</label>
+                <div id="hookSelector">
+                    <span>Imagen:</span>
+                    <label id="_img_id"></label>
+                    <img id="_img_img" src="" />
+                </div>
+        </p>
+        <p>
+            <button class="boton" type="button" onclick="validarLogin()">Login</button>
+        </p>
+    </div>
+    <div id="retorno">
+        <br />
+        <label id="_error"></label> <br />
+        <label id="_error_txt"></label> <br />
+        <label id="_token"></label> <br />
+        <label id="_clave"></label> <br />
+        <label id="_valor"></label>
+    </div>
+</body>
