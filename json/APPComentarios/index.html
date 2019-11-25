@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <link href="estilo.css" rel="stylesheet" />
+    <script type="text/javascript" src="funciones.js"></script>
 </head>
 <script>
     const URI_SERVICE = "http://10.1.2.10:8081/cfticionic/usuariocftic";
+    const URI_FOTOS = "./selectorFotos.html";
 
     var xmlHttp;
     var login;
@@ -13,34 +15,36 @@
     // token 2: HMFFLHHWKKO3
 
     class Usuario {
-        constructor(n, l) {
+        constructor(n, l, t) {
             this.nombre = n;
             this.pwd = l;
-            this.token = null;
+            this.tkn = t;
         }
         verUsuario() {
             console.log(this);
-            console.log("usuario:" + this.numero + "-" + this.pwd + "-" + this.token);
+            console.log("usuario:" + this.numero + "-" + this.pwd + "-" + this.tkn);
         }
         toString() {
             return JSON.stringify(this);
         }
         setToken(valor) {
-            this.token = valor;
+            this.tkn = valor;
         }
     }
     //obtiene los datos del login y llama ajax a servicio
     function validarLogin() {
+        console.log(" login() ... entra   ");
+
         const nombre = document.getElementById("nombre");
         const pwd = document.getElementById("pwd");
-        console.log(" login() ... entra   ");
         xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = comprobarEstado;
         xmlHttp.open('POST', URI_SERVICE, true);
+
         //completar petición pOsT
-        login = new Usuario(nombre.value, pwd.value);
-        console.log(login);
         xmlHttp.setRequestHeader("content-type", "application/json");
+
+        login = new Usuario(nombre.value, pwd.value, null); //, cuerpo.token);
         xmlHttp.send(login.toString()); //post: datos en body
 
         console.log("login() ... sale   ");
@@ -48,8 +52,10 @@
     function comprobarEstado() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
-                var cuerpo = xmlHttp.responseText;
+                var cuerpo = JSON.parse(xmlHttp.responseText);
                 console.log(" Retorno correcto. Cuerpo ... " + cuerpo);
+                console.log(login);
+                login = new Usuario(nombre.value, pwd.value, cuerpo.token);
                 guardarToken(cuerpo);
             } else {
                 console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
@@ -59,14 +65,12 @@
     }
     function guardarToken(cuerpo) {
         login.setToken(cuerpo["token"]);
-        const clave_token = "token";
-        guardarLocal(clave_token, login.token);
-        const _token = document.getElementById("_token");
-        const _clave = document.getElementById("_clave");
-        const _valor = document.getElementById("_valor");
-        _clave.innerHTML = clave_token;
-        _token.innerHTML = login.token;
+        console.log("login"); console.log(login);
 
+        const clave_token = "token";        //guardarLocal(clave_token, login.token);
+        guardarLocal("login", login);
+        const _token = document.getElementById("_token"); const _clave = document.getElementById("_clave"); const _valor = document.getElementById("_valor");
+        _clave.innerHTML = clave_token; _token.innerHTML = login.tkn;
     }
     function sacarError(cuerpo) {
         const RET = document.getElementById("_error");
@@ -76,15 +80,8 @@
         RET.innerHTML = xmlHttp.status;
         RET_TXT.innerHTML = "Error en la llamada al servicio " + URI_SERVICE;
     }
-    function guardarLocal(clave, valor) {
-        localStorage.setItem(clave, valor);
-        console.log("Token guardado " + clave + "[" + valor + "] = " + verLocal(clave));
-    }
-    function verLocal(clave) {
-        valor = localStorage.getItem(clave);
-        console.log("Token recuperado:" + clave + "-" + valor);
-        return valor;
-    }
+    //function guardarLocal(clave, valor) { localStorage.setItem(clave, valor); console.log("Token guardado " + clave + "[" + valor + "] = " + verLocal(clave)); }
+    //function verLocal(clave) { valor = localStorage.getItem(clave); console.log("Token recuperado:" + clave + "-" + valor); return valor; }
 </script>
 
 <body>
@@ -103,14 +100,16 @@
         </p>
         <p>
             <button class="boton" type="button" onclick="validarLogin()">Login</button>
+            <br />
+            <button class="boton" type="button" onclick="window.location.href=URI_FOTOS;">Ver Fotos</button>
         </p>
     </div>
     <div id="retorno">
         <br />
-        <label id="_error"></label>        <br />
-        <label id="_error_txt"></label>        <br />
-        <label id="_token"></label>        <br />
-        <label id="_clave"></label>        <br />
+        <label id="_error"></label> <br />
+        <label id="_error_txt"></label> <br />
+        <label id="_token"></label> <br />
+        <label id="_clave"></label> <br />
         <label id="_valor"></label>
     </div>
 </body>
