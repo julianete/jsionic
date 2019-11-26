@@ -6,3 +6,11 @@
     font-size: large;
     border-radius: 1px;
 }
+img{
+    align-self: center;
+    width: 200px;
+    height: 290px;
+}
+div {
+    float: left;
+}

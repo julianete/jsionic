@@ -15,7 +15,7 @@ function llamarSrv(uri, req, callback) {
                 callback(JSON.parse(xmlHttp.responseText));
             } else {
                 console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
-                sacarError();
+                sacarErrorG();
             }
         } else { console.log(" En proceso (xmlHttp.readyState) ... " + xmlHttp.readyState); }
     }
@@ -23,4 +23,17 @@ function llamarSrv(uri, req, callback) {
     xmlHttp.open('GET', uri, true);
     xmlHttp.send(null); //get: NO datos en body
     console.log("llamarSrv() ... sale ...");
+}
+function sacarErrorG() {
+    const RET = document.getElementById("_error");
+    const RET_TXT = document.getElementById("_error_txt");
+    RET.innerHTML = xmlHttp.status;
+    RET_TXT.innerHTML = "Error en la llamada al servicio " + uri;
+}
+class Usuario {
+    constructor(n, l, t) { this.nombre = n; this.pwd = l; this.tkn = t; }
+    verUsuario() { console.log(this); console.log("usuario:" + this.numero + "-" + this.pwd + "-" + this.tkn); }
+    toString() { return JSON.stringify(this); }
+    toToken() { return this.nombre + this.tkn; }
+    setToken(valor) { this.tkn = valor; }
 }

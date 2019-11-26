@@ -13,23 +13,6 @@
     // token 1: MH3OOWHWKKO3
     // token 2: HMFFLHHWKKO3
 
-    class Usuario {
-        constructor(n, l, t) {
-            this.nombre = n;
-            this.pwd = l;
-            this.tkn = t;
-        }
-        verUsuario() {
-            console.log(this);
-            console.log("usuario:" + this.numero + "-" + this.pwd + "-" + this.tkn);
-        }
-        toString() {
-            return JSON.stringify(this);
-        }
-        setToken(valor) {
-            this.tkn = valor;
-        }
-    }
     //obtiene los datos del login y llama ajax a servicio
     function validarLogin() {
         console.log(" login() ... entra   ");
@@ -58,7 +41,7 @@
                 guardarToken(cuerpo);
             } else {
                 console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
-                sacarError();
+                sacarError(cuerpo);
             }
         } else { console.log(" En proceso - xmlHttp.status ... " + xmlHttp.readyState); }
     }
