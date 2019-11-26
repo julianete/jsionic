@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="estilo.css" rel="stylesheet" />
+    <script type="text/javascript" src="./funciones.js"></script>
 </head>
 <script>
 
@@ -45,6 +46,22 @@
     function obtenerImagenes() {
         console.log("obtenerImagenes() ... entra   ");
         xmlHttp = new XMLHttpRequest();
+        mensajeFotos = new MensajeFotos();
+        //obtener login para el mensaje con usuario+token
+        var usuario = verLocal("login");
+        login = JSON.parse(usuario);
+        //crea un mesaje de "fotos"
+        mensajeFotos = new MensajeFotos(login.nombre, login.tkn);
+        xmlHttp.onreadystatechange = comprobarEstado;
+        // URI con usuario + token
+        uri = URI_SERVICE + "?" + mensajeFotos.toKey();
+        xmlHttp.open('GET', uri, true);
+        xmlHttp.send(null); //get: NO datos en body
+        console.log("obtenerImagenes() ... sale   ");
+    }
+    /*function obtenerImagenes() {
+        console.log("obtenerImagenes() ... entra   ");
+        xmlHttp = new XMLHttpRequest();
         //componer mensaje para obtener la lista de fotos
         mensajeFotos = new MensajeFotos();
         //obtener login para el mensaje con usuario+token
@@ -60,7 +77,7 @@
         xmlHttp.open('GET', uri, true);
         xmlHttp.send(null); //get: NO datos en body
         console.log("obtenerImagenes() ... sale   ");
-    }
+    }*/
     function comprobarEstado() {
         if (xmlHttp.readyState == 4) {
             if (xmlHttp.status == 200) {
@@ -81,24 +98,25 @@
         for (const img in listaImg) {
             if (listaImg.hasOwnProperty(img)) {
                 var foto = listaImg[img];
+                //crear imagen, botón e id con label
                 var imgVista = document.createElement("img");
-                
                 var imgButton = document.createElement("button");
                 var imgID = document.createElement("label");
-                imgButton.appendChild(imgID).innerHTML=foto.idfoto;
-                imgButton.id=foto.idfoto;
-
+                imgButton.appendChild(imgID).innerHTML = foto.idfoto;
+                imgButton.id = foto.idfoto;
                 imgButton.innerHTML = "Comentarios";
+                // agregar cllbck event listener de comentarios
                 //imgButton.click = "comentar(" + foto.idfoto + ")";
-                //imgButton.addEventListener("click", "comentarFoto(foto.idfoto");
-                imgButton.addEventListener("click",comentarFoto);
-                var p = document.createElement("p");
+                imgButton.addEventListener("click", comentariosFoto);
+                var div = document.createElement("div");
                 imgVista.src = foto.ruta;
                 //imgID.innerHTML = foto.nfoto;
-                HOOKIMG.appendChild(p);
-                p.appendChild(imgID);
-                p.appendChild(imgVista);
-                p.appendChild(imgButton);
+                HOOKIMG.appendChild(div);
+                div.appendChild(imgID);
+                div.appendChild(imgVista);
+                div.appendChild(imgButton);
+                // id para agregar los comentarios al pulsar el botón
+                div.id = "div" + foto.idfoto;
                 mensajeFotos.addFoto(foto);  // push de la foto para guardar el id y la url, 
                 //obtenerInfo(foto); // obtener del servidor los datos de la foto , nombre, comentario1
             }
@@ -137,19 +155,85 @@
         const RET = document.getElementById("_error");
         const RET_TXT = document.getElementById("_error_txt");
         RET.innerHTML = xmlHttp.status;
-        RET_TXT.innerHTML = "Error en la llamada al servicio " + URI_SERVICE;
+        RET_TXT.innerHTML = "Error en la llamada al servicio " + uri;
     }
-    function guardarLocal(clave, valor) { localStorage.setItem(clave, valor); console.log("Clave-saved " + clave + "[" + valor + "] = " + verLocal(clave)); }
-    function verLocal(clave) { valor = localStorage.getItem(clave); console.log("Clave-recuperado:" + clave + "-" + valor); return valor; }
-    function comentarFoto(idf) {
-        console.log("idf:"+idf);
+    //function guardarLocal(clave, valor) { localStorage.setItem(clave, valor); console.log("Clave-saved " + clave + "[" + valor + "] = " + verLocal(clave)); }
+    //function verLocal(clave) { valor = localStorage.getItem(clave); console.log("Clave-recuperado:" + clave + "-" + valor); return valor; }
+    function comentariosFoto(idf) {
+        console.log("idf:");
+        console.log(idf);
+        console.log("this:");
+        console.log(this);
+        //guardar la seleccion de la foto,
+        // luego se necesita para recuperar/colocar los comentarios
+        // en la vista
         var id = this.id;
+        
+        //Borrar los elementos hijos de los comentarios cargados
+        var idvista = verLocal("idfoto");
+        if (idvista) {
+            var divid = document.getElementById("div" + idvista);
+            while (divid.firstChild) {
+                divid.removeChild(divid.firstChild);
+            }
+        }
+        guardarLocal("idfoto", id);
         obtenerComentariosFoto(id);
     }
     function volver() { window.location.href = "./index.html"; }
-    function obtenerComentariosFoto(id){
+    function obtenerComentariosFoto(id) {
         //GET http://10.1.2.10:8081/cfticionic/comentarios/foto?key=CQOYQYTQ3CP3&idfoto=5
-        obtenerListaComentarios();
+        uri = "http://10.1.2.10:8081/cfticionic/comentarios/foto?key=" + login.tkn + "&idfoto=" + id;
+        llamarSrv(uri, null, tratarComentarios);
+    }
+    function tratarComentarios(obj) {
+        //FORMATO DEL MENSAJE DE VUELTA (JSON)
+        /*[{"id":66,
+        "autor":"alumno10",
+        "idfoto":5,"momento":1574598838203,
+        "texto":"la verdad, me ha gustado aunque el final un poco feo"},
+        {"id":67,"autor":"alumno10",
+        "idfoto":5,"momento":1574596744100,
+        "texto":"a la dirección artística, pá matarla"}]*/
+        var divid;
+        //RECUPOERAR DIVID PARA LLENAR LA VISTA
+        divid = document.getElementById("div" + verLocal("idfoto"));
+        var ul = document.createElement("ul");
+        divid.appendChild(ul);
+        for (const clave in obj) {
+            if (obj.hasOwnProperty(clave)) {
+                const cmnt = obj[clave];
+                //componer las etq de la vista
+                var li = document.createElement("li");
+                var span1 = document.createElement("span");
+                span1.innerHTML = cmnt.id + "-" + cmnt.autor;
+                var span2 = document.createElement("span");
+                span2.innerHTML = cmnt.texto;
+                li.appendChild(span1);
+                li.appendChild(span2);
+                ul.appendChild(li);
+                //SI EL USUARIO ES EL MISMO 
+                // ACTIVAR BOTON DE BORRADO Y MODIFICACION
+                if (cmnt.autor == login.nombre){
+                    var btnMod = document.createElement("button");
+                    var btnBor = document.createElement("button");
+                    btnMod.innerHTML = "modif cmntr";
+                    btnMod.id=cmnt.id;
+                    btnMod.addEventListener("click",modificarComentario);
+                    btnBor.innerHTML = "borrar cmntr";
+                    btnBor.id=cmnt.id;
+                    btnBor.addEventListener("click",borrarComentario);
+                    li.appendChild(btnMod);
+                    li.appendChild(btnBor);
+                }
+            }
+        }
+    }
+    function modificarComentario(){
+        alert("modif comt:"+this.id)
+    }
+    function borrarComentario(){
+        alert("BORRAR comt:"+this.id)
     }
 </script>
 
@@ -162,10 +246,10 @@
         <p class="marco">
             <label>Seleccionar imagen a comentar</label>
             <div id="hookSelector">
-                <span>Imagen:</span>
+                <!-- <span>Imagen:</span>
                 <label id="_img_id"></label>
-                <img id="_img_img" src="" />
-                <!--                 <button onclick="cargaFoto(idFoto);">Comentar</button> -->
+                <img id="_img_img" src="" /> -->
+                <!-- <button onclick="cargaFoto(idFoto);">Comentar</button> -->
             </div>
         </p>
         <p> <button class="boton" type="button" onclick="volver()">Volver</button> </p>
