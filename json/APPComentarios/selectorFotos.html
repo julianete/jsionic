@@ -13,7 +13,8 @@
     const URI_SERVICE_INFO = "http://10.1.2.10:8081/cfticionic/foto"; //?key=CQOYQYTQ3CP3&idfoto=3";
     const URI_SERVICE_COMENTARIOS = "http://10.1.2.10:8081/cfticionic/comentarios/foto"; //?key=CQOYQYTQ3CP3&idfoto=3";
     const URI_SERVICE_ALTA = "http://10.1.2.10:8081/cfticionic/comentario/foto"; //?key=CQOYQYTQ3CP3&idfoto=3";
-
+    const URI_SERVICE_NUEVOCMT = "http://10.1.2.10:8081/cfticionic/comentario"; //?key=CQOYQYTQ3CP3&idfoto=3";
+    http://10.1.2.10:8081/cfticionic/comentario
     var uri;
     var xmlHttp;
     var login;
@@ -118,11 +119,20 @@
         // luego se necesita para recuperar/colocar los comentarios
         // en la vista
         var id = this.id;
+
         //BORRAR los elementos ul 'hijos' de los comentarios cargados
+        //   de anterior selección
+        //     div comentarios: ul + botones
+        //     div alta: boton + caja
         var idvista = verLocal("idfoto");
         if (idvista) {
-            var ulid = document.getElementById("ul" + idvista);
+            var dividalta = document.getElementById("divAlta" + idvista);
+            if (dividalta) {
+                while (dividalta.firstChild) dividalta.removeChild(dividalta.firstChild);
+            }
+
             var divid = document.getElementById("div" + idvista);
+            var ulid = document.getElementById("ul" + idvista);
             if (divid && ulid) {
                 while (ulid.firstChild) {
                     ulid.removeChild(ulid.firstChild);
@@ -130,9 +140,23 @@
                 ulid.remove();
             }
         }
-
         //GUARDAR la nueva foto
         guardarLocal("idfoto", id);
+
+        //RECUPERAR DIVID PARA LLENAR LA VISTA
+        var idfoto = id;
+        var divid = document.getElementById("div" + idfoto);
+        var divAlta = document.createElement("div");
+        divAlta.id = "divAlta" + idfoto;
+        var btnAlta = document.createElement("button");
+        btnAlta.innerHTML = "Nuevo comentario";
+        btnAlta.id = "btnAlta" + idfoto;
+        btnAlta.idfoto = idfoto;
+        btnAlta.addEventListener("click", altaComentario);
+        divAlta.appendChild(btnAlta);
+        divid.appendChild(divAlta);
+
+        //COMPLETAR COMENTARIOS
         obtenerComentariosFoto(id);
     }
     function volver() { window.location.href = "./index.html"; }
@@ -173,12 +197,14 @@
                 // ACTIVAR BOTON DE BORRADO Y MODIFICACION
                 if (cmnt.autor == login.nombre) {
                     var btnMod = document.createElement("button");
-                    var btnBor = document.createElement("button");
                     btnMod.innerHTML = "modif cmntr";
-                    btnMod.id = cmnt.id;
+                    btnMod.id = "btnmod" + cmnt.id;
+                    btnMod.idcmt = cmnt.id;
                     btnMod.addEventListener("click", modificarComentario);
+                    var btnBor = document.createElement("button");
                     btnBor.innerHTML = "borrar cmntr";
-                    btnBor.id = cmnt.id;
+                    btnBor.id = "btnbor" + cmnt.id;
+                    btnBor.idcmt = cmnt.id;
                     btnBor.addEventListener("click", borrarComentario);
                     li.appendChild(btnMod);
                     li.appendChild(btnBor);
@@ -220,6 +246,105 @@
     }
     function tratarModifComentario() {
         var idBtn = this.id;
+        //TO-DO -> tratar modificar
+        // servicio 6
+        // PUT http://10.1.2.10:8081/cfticionic/comentario BODY { "nombre": "alumno10", "texto": "Si lo sé no vengo. Dinero mal invertido", "token": "CQOYQYTQ3CP3", "idfoto": 5,"idcomentario": 66}
+    }
+    function tratarCancelarComentario() {
+
+    }
+    function borrarComentario() {
+        var idBtn = this.id;
+        //TO-DO -> tratar borrado
+        // servicio 7
+        // DELETE http://10.1.2.10:8081/cfticionic/comentario?key=CQOYQYTQ3CP3&idcomentario=66&nombre=alumno10
+    }
+    function altaComentario() {
+        /*
+        La leche, he visto todas las partes y me parece increíble el mantenimiento de 'Arnold'
+        */
+        // OK -> tratar alta Comentario
+
+        // RECUPERAR EL ID DEL DIV DE ALTA DESDE EL BOTON
+        var divAlta = document.getElementById("divAlta" + this.idfoto);
+
+        // TESTING -> QUITAR BTN NUEVO COMENTARIO
+        var btnNuevoCmt = document.getElementById("btnAlta" + this.idfoto);
+        divAlta.removeChild(btnNuevoCmt);
+
+        //AGREGAR UN CAJA PARA EL TEXTO
+        var caja = document.createElement("textarea");
+        caja.id = "txtidAlta" + this.idfoto;
+
+        //BTN CONFIRMAR GUARDAR ID DE LA FOTO
+        var btnConfirmarAlta = document.createElement("button");
+        btnConfirmarAlta.innerHTML = "Enviar";
+        btnConfirmarAlta.id = "btnConfirmarAlta" + this.idfoto;
+        btnConfirmarAlta.idfoto = this.idfoto;
+        btnConfirmarAlta.addEventListener("click", tratarConfirmarAltaComentario);
+
+        //BTN CANCELAR GUARDAR ID DE LA FOTO
+        var btnCancelarAlta = document.createElement("button");
+        btnCancelarAlta.innerHTML = "Cancelar";
+        btnCancelarAlta.id = "btnCancelarAlta" + this.idfoto;
+        btnCancelarAlta.idfoto = this.idfoto;
+        btnCancelarAlta.addEventListener("click", tratarCancelarAltaComentario);
+
+        divAlta.appendChild(btnConfirmarAlta);
+        divAlta.appendChild(btnCancelarAlta);
+        divAlta.appendChild(caja);
+        divAlta.appendChild(btnConfirmarAlta);
+        divAlta.appendChild(btnCancelarAlta);
+    }
+    function tratarConfirmarAltaComentario() {
+        // TO_DO: - validar txt
+        // TO_DO: - preparar envío al srv 4
+        alert("TO-DO : grabar srv comentario");
+        // servicio 4
+        // POST
+        // http://10.1.2.10:8081/cfticionic/comentario
+        /*
+        BODY
+        { "nombre": "alumno10",
+        "texto": "la verdad, me ha gustado aunque el final un poco feo",
+        "token": "CQOYQYTQ3CP3",
+        "idfoto": 5}
+        */
+        console.log("tratarConfirmarAltaComentario() ... entra   ");
+        var usuario = verLocal("login");
+        login = JSON.parse(usuario);
+        //crea un mesaje de "fotos"
+        uri = URI_SERVICE_NUEVOCMT;
+
+        //EL ID EN EL BTN, !!!TAMBIEN ESTA EN LOCAL-STORAGE!!!
+        var _idfoto = this.idfoto;
+        //CAJA CON EL TEXTO DEL CMT
+        var caja = document.getElementById("txtidAlta" + _idfoto);//EL ID EN EL BTN
+
+        var body =  "nombre:" + login.nombre
+            + " texto:" + caja.value
+            + " token:" + login.tkn
+            + " idfoto:" + _idfoto;
+
+        var req = {
+            metodo: "POST",
+            mensaje: JSON.parse(body)
+        }
+
+        llamarSrv(uri, req, confirmalAltaOK);
+        // URI con usuario + token
+        console.log("tratarConfirmarAltaComentario() ... sale   ");
+    }
+    function confirmalAltaOK() {
+        console.log("Alta de comentario correcta.");
+        //TO-DO => actualizar comentarios en la lista de esta foto
+        //TO-DO => actualizar comentarios en la lista de esta foto
+        //TO-DO => actualizar comentarios en la lista de esta foto
+        //TO-DO => actualizar comentarios en la lista de esta foto
+    }
+    function tratarCancelarAltaComentario() {
+        // TO_DO: quitar caja comentario
+        alert("TO-DO : deshacer caja alta comentario");
     }
     function borrarComentario() {
         alert("BORRAR comt:" + this.id)
