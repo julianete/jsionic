@@ -9,6 +9,10 @@
     window.onload = obtenerImagenes;
     //http://10.1.2.10:8081/cfticionic/fotos
 
+    // alumno1 - VTNOLOVLLCOY
+    // token 1: MH3OOWHWKKO3
+    // token 2: HMFFLHHWKKO3
+
     const URI_SERVICE = "http://10.1.2.10:8081/cfticionic/fotos";
     const URI_SERVICE_INFO = "http://10.1.2.10:8081/cfticionic/foto"; //?key=CQOYQYTQ3CP3&idfoto=3";
     const URI_SERVICE_COMENTARIOS = "http://10.1.2.10:8081/cfticionic/comentarios/foto"; //?key=CQOYQYTQ3CP3&idfoto=3";
@@ -20,8 +24,6 @@
     var login;
     var mensajeFotos; // almacena el usuario, token y la lista de fotos obtenida, con su info.
     var comentariosFoto;
-    // token 1: MH3OOWHWKKO3
-    // token 2: HMFFLHHWKKO3
     class MensajeFotos {
         constructor(u, t) { this.usuario = u; this.token = t; }
         toString() { return JSON.stringify(this); }
@@ -243,6 +245,7 @@
         divVistaModif.id = "divModif" + idVistaModif;
         btnAceptarVistaModif.id = "btnAceptar" + idVistaModif;
         btnCancelarVistaModif.id = "btnCancelar" + idVistaModif;
+        btnCancelarVistaModif.iddiv = divVistaModif.id;
     }
     function tratarModifComentario() {
         var idBtn = this.id;
@@ -251,13 +254,26 @@
         // PUT http://10.1.2.10:8081/cfticionic/comentario BODY { "nombre": "alumno10", "texto": "Si lo sé no vengo. Dinero mal invertido", "token": "CQOYQYTQ3CP3", "idfoto": 5,"idcomentario": 66}
     }
     function tratarCancelarComentario() {
+        // *TESTING* --> deshacer vista de comentario
+        //    PUEDE VE IR DEL BOTON DE BORRAR , MODIFICAR O ALTA
+        //       NECESITAMOS EL ID DEL DIV DE LA VISTA Y REMOVER SUS HIJOS
 
+        // id al que pertenece el btn del evento
+        var divVistaBorrar = document.getElementById(this.iddiv);
+        if (divVistaBorrar) {
+            while (divVistaBorrar.firstChild) {
+                divVistaBorrar.removeChild(divVistaBorrar.firstChild);
+            }
+        }
     }
     function borrarComentario() {
         var idBtn = this.id;
         //TO-DO -> tratar borrado
         // servicio 7
         // DELETE http://10.1.2.10:8081/cfticionic/comentario?key=CQOYQYTQ3CP3&idcomentario=66&nombre=alumno10
+        llamarSrv(uri, req, confirmalAltaOK);
+        // URI con usuario + token
+        console.log("tratarConfirmarAltaComentario() ... sale   ");
     }
     function altaComentario() {
         /*
@@ -321,15 +337,33 @@
         //CAJA CON EL TEXTO DEL CMT
         var caja = document.getElementById("txtidAlta" + _idfoto);//EL ID EN EL BTN
 
-        var body =  "nombre:" + login.nombre
-            + " texto:" + caja.value
-            + " token:" + login.tkn
-            + " idfoto:" + _idfoto;
+        var body = {
+            nombre: login.nombre,
+            texto: caja.value,
+            token: login.tkn,
+            idfoto: parseInt(_idfoto)
+        }
 
         var req = {
             metodo: "POST",
-            mensaje: JSON.parse(body)
+            //mensaje: body ,    // el body ya está como obj
+            bd: {
+                nombre: login.nombre,
+                texto: caja.value,
+                token: login.tkn,
+                idfoto: parseInt(_idfoto)
+            }
         }
+
+        console.log("body");
+        console.log(body);
+        var js = JSON.stringify(body);
+        console.log(js);
+        var ts = body.toString();
+        console.log(ts);
+        var rq = req.toString();
+        console.log(rq);
+
 
         llamarSrv(uri, req, confirmalAltaOK);
         // URI con usuario + token
@@ -346,23 +380,20 @@
         // TO_DO: quitar caja comentario
         alert("TO-DO : deshacer caja alta comentario");
     }
-    function borrarComentario() {
+    function tratarBorrarComentario() {
         alert("BORRAR comt:" + this.id)
+
     }
 </script>
 
 <body>
-    <h1>APP - Selección de imagen a comentar</h1>
+    <h1>APP - SELECCIÓN de imagen a comentar</h1>
     <div id="retorno">
-        <br />
-        <label id="_error"></label> <br />
-        <label id="_error_txt"></label> <br />
-        <label id="_token"></label> <br />
-        <label id="_clave"></label> <br />
-        <label id="_valor"></label>
+        <br /><label id="_error"></label> <br /><label id="_error_txt"></label> <br /><label id="_token"></label> <br />
+        <label id="_clave"></label> <br /><label id="_valor"></label>
     </div>
     <!--     <h1>APP - Comentarios</h1> -->
-    <h2>SELECCIÓN</h2>
+    <h2></h2>
     <div>
         <p> <button class="boton" type="button" onclick="volver()">Volver</button> </p>
         <p class="marco">

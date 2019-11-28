@@ -13,4 +13,11 @@ img{
 }
 div {
     float: left;
+    width: 100px;
+    height: 50px;
+}
+input[type="textarea"] {
+    float: left;
+    width: 100px;
+    height: 50px;
 }
