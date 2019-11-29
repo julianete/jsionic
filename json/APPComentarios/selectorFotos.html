@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 
 <head>
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
     <meta charset="UTF-8">
     <link href="estilo.css" rel="stylesheet" />
+    <link href="./css/index.css" rel="stylesheet" />
+
+    <title>Image-Select!</title>
     <script type="text/javascript" src="./funciones.js"></script>
 </head>
 <script>
@@ -83,70 +88,45 @@
         }
     }
     function obtenerInfo(img) {
-        console.log("obtenerInfo() ... entra   ");
-        xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = comprobarEstadoInfo;
-        // URI con usuario + token
-        uri = URI_SERVICE_INFO + "?" + mensajeFotos.toKeyIdFoto();
-        xmlHttp.open('GET', uri, true);
-        xmlHttp.send(null); //get: NO datos en body
-        console.log("obtenerInfo() ... sale   ");
-    }
-    function comprobarEstadoInfo() {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) {
-                var cuerpo = JSON.parse(xmlHttp.responseText);
-                console.log(" ** OK ** ... " + xmlHttp.status);
-                console.log(" Retorno correcto. Cuerpo ... " + cuerpo);
-                guardarImagen(cuerpo);
-            } else {
-                console.log(" ** Error ** en el servicio ... " + xmlHttp.status);
-                sacarError();
-            }
-        }
-    }
-    // TO-DO : guardar localStorage con la lista de fotos
-    function infoImagen() {
         //SERVICIO 3 OBTENER INFORMACIÓN DE UNA FOTO
         //GET http://10.1.2.10:8081/cfticionic/foto?key=CQOYQYTQ3CP3&idfoto=3
+        console.log("obtenerInfo() ... entra   ");
+        uri = URI_SERVICE_INFO + "?" + mensajeFotos.toKeyIdFoto();
+        llamarSrv(uri, null, guardarImagen);
+        console.log("obtenerInfo() ... sale   ");
     }
-    //function guardarLocal(clave, valor) { localStorage.setItem(clave, valor); console.log("Clave-saved " + clave + "[" + valor + "] = " + verLocal(clave)); }
-    //function verLocal(clave) { valor = localStorage.getItem(clave); console.log("Clave-recuperado:" + clave + "-" + valor); return valor; }
+    // TO-DO : guardar localStorage con la lista de fotos
+    function infoImagen() { }//??? no se para que era esta fx
     function comentariosFoto(idf) {
-        console.log("idf:");
-        console.log(idf);
-        console.log("this:");
-        console.log(this);
-        //guardar la seleccion de la foto,
-        // luego se necesita para recuperar/colocar los comentarios
-        // en la vista
+
+        // el disparador debe tener .id con el id de la foto
         var id = this.id;
-
-        //BORRAR los elementos ul 'hijos' de los comentarios cargados
-        //   de anterior selección
-        //     div comentarios: ul + botones
-        //     div alta: boton + caja
+        /*
+                //GUARDAR la seleccion de la foto,
+                //  pero antes borrar la vista antigua
+                //    luego se necesita para recuperar/colocar/actualizar los comentarios
+                //  en la vista
+        
+                // ANTERIOR selección
+                //BORRAR los elementos 'hijos' ul, divalta, botones... de los comentarios cargados
+                //     div comentarios: ul + botones
+                //     div alta: boton + caja
+         */
+        //BORRAR vista foto anterior...
         var idvista = verLocal("idfoto");
-        if (idvista) {
-            var dividalta = document.getElementById("divAlta" + idvista);
-            if (dividalta) {
-                while (dividalta.firstChild) dividalta.removeChild(dividalta.firstChild);
-            }
+        vistaBorrarComentarios(idvista);
 
-            var divid = document.getElementById("div" + idvista);
-            var ulid = document.getElementById("ul" + idvista);
-            if (divid && ulid) {
-                while (ulid.firstChild) {
-                    ulid.removeChild(ulid.firstChild);
-                }
-                ulid.remove();
-            }
-        }
-        //GUARDAR la nueva foto
+        //GUARDAR la nueva foto... para la siguiente selección
         guardarLocal("idfoto", id);
 
         //RECUPERAR DIVID PARA LLENAR LA VISTA
-        var idfoto = id;
+        vistaMostrarComentarios(id);
+
+        //COMPLETAR COMENTARIOS
+        obtenerComentariosFoto(id);
+    }
+    function vistaMostrarComentarios(id) {
+        var idfoto = id; //this.id es la 
         var divid = document.getElementById("div" + idfoto);
         var divAlta = document.createElement("div");
         divAlta.id = "divAlta" + idfoto;
@@ -157,9 +137,20 @@
         btnAlta.addEventListener("click", altaComentario);
         divAlta.appendChild(btnAlta);
         divid.appendChild(divAlta);
-
-        //COMPLETAR COMENTARIOS
-        obtenerComentariosFoto(id);
+        
+    }
+    // Refactorizado de 'comentariosFoto()''
+    function vistaBorrarComentarios(idvista) {
+        if (idvista) {
+            var dividalta = document.getElementById("divAlta" + idvista);
+            if (dividalta) { while (dividalta.firstChild) dividalta.removeChild(dividalta.firstChild); }
+            var divid = document.getElementById("div" + idvista);
+            var ulid = document.getElementById("ul" + idvista);
+            if (divid && ulid) {
+                while (ulid.firstChild) { ulid.removeChild(ulid.firstChild); }
+                ulid.remove();
+            }
+        }
     }
     function volver() { window.location.href = "./index.html"; }
     function obtenerComentariosFoto(id) {
@@ -295,6 +286,7 @@
         //BTN CONFIRMAR GUARDAR ID DE LA FOTO
         var btnConfirmarAlta = document.createElement("button");
         btnConfirmarAlta.innerHTML = "Enviar";
+        btnConfirmarAlta.className = "event listening";
         btnConfirmarAlta.id = "btnConfirmarAlta" + this.idfoto;
         btnConfirmarAlta.idfoto = this.idfoto;
         btnConfirmarAlta.addEventListener("click", tratarConfirmarAltaComentario);
@@ -302,6 +294,7 @@
         //BTN CANCELAR GUARDAR ID DE LA FOTO
         var btnCancelarAlta = document.createElement("button");
         btnCancelarAlta.innerHTML = "Cancelar";
+        btnCancelarAlta.className = "event listening";
         btnCancelarAlta.id = "btnCancelarAlta" + this.idfoto;
         btnCancelarAlta.idfoto = this.idfoto;
         btnCancelarAlta.addEventListener("click", tratarCancelarAltaComentario);
@@ -313,19 +306,16 @@
         divAlta.appendChild(btnCancelarAlta);
     }
     function tratarConfirmarAltaComentario() {
-        // TO_DO: - validar txt
-        // TO_DO: - preparar envío al srv 4
-        alert("TO-DO : grabar srv comentario");
+        //
+        //  *TO-DO*: - validar txt
+        //
+        // preparar envío al srv 4
         // servicio 4
         // POST
         // http://10.1.2.10:8081/cfticionic/comentario
-        /*
-        BODY
-        { "nombre": "alumno10",
-        "texto": "la verdad, me ha gustado aunque el final un poco feo",
-        "token": "CQOYQYTQ3CP3",
-        "idfoto": 5}
-        */
+        /* BODY
+            { "nombre": "alumno10", "texto": "la verdad, me ha gustado aunque el final un poco feo",
+            "token": "CQOYQYTQ3CP3", "idfoto": 5}   */
         console.log("tratarConfirmarAltaComentario() ... entra   ");
         var usuario = verLocal("login");
         login = JSON.parse(usuario);
@@ -337,13 +327,15 @@
         //CAJA CON EL TEXTO DEL CMT
         var caja = document.getElementById("txtidAlta" + _idfoto);//EL ID EN EL BTN
 
+        //COMPONER PARAMETROS PARA ALTA DE COMENTARIO
+        // -REQ : parámetro a servicoAjax con "POST" + BODY
+        // -BODY NOMBRE, TEXTO, TOKEN, IDFOTO
         var body = {
             nombre: login.nombre,
             texto: caja.value,
             token: login.tkn,
             idfoto: parseInt(_idfoto)
         }
-
         var req = {
             metodo: "POST",
             //mensaje: body ,    // el body ya está como obj
@@ -352,9 +344,9 @@
                 texto: caja.value,
                 token: login.tkn,
                 idfoto: parseInt(_idfoto)
-            }
+            },
+            codigos: [200, 201] // códigos de retorno aceptados
         }
-
         console.log("body");
         console.log(body);
         var js = JSON.stringify(body);
@@ -364,17 +356,30 @@
         var rq = req.toString();
         console.log(rq);
 
-
         llamarSrv(uri, req, confirmalAltaOK);
         // URI con usuario + token
         console.log("tratarConfirmarAltaComentario() ... sale   ");
     }
     function confirmalAltaOK() {
         console.log("Alta de comentario correcta.");
+
         //TO-DO => actualizar comentarios en la lista de esta foto
         //TO-DO => actualizar comentarios en la lista de esta foto
         //TO-DO => actualizar comentarios en la lista de esta foto
-        //TO-DO => actualizar comentarios en la lista de esta foto
+        //BORRAR vista foto anterior...
+
+        //var idvista = verLocal("idfoto");
+        var idfoto = this.idfoto;
+        vistaBorrarComentarios(idfoto);
+
+        //GUARDAR la nueva foto... para la siguiente selección
+        guardarLocal("idfoto", idfoto);
+
+        //RECUPERAR DIVID PARA LLENAR LA VISTA
+        vistaMostrarComentarios(idfoto);
+
+        //COMPLETAR COMENTARIOS
+        obtenerComentariosFoto(idfoto);
     }
     function tratarCancelarAltaComentario() {
         // TO_DO: quitar caja comentario
@@ -388,18 +393,21 @@
 
 <body>
     <h1>APP - SELECCIÓN de imagen a comentar</h1>
-    <div id="retorno">
-        <br /><label id="_error"></label> <br /><label id="_error_txt"></label> <br /><label id="_token"></label> <br />
-        <label id="_clave"></label> <br /><label id="_valor"></label>
-    </div>
-    <!--     <h1>APP - Comentarios</h1> -->
-    <h2></h2>
-    <div>
-        <p> <button class="boton" type="button" onclick="volver()">Volver</button> </p>
-        <p class="marco">
-            <label>Seleccionar imagen a comentar</label>
-            <div id="hookSelector"></div>
-        </p>
-        <p> <button class="boton" type="button" onclick="volver()">Volver</button> </p>
+    <div class="app">
+        <div id="retorno" class="blink">
+            <br /><label id="_error"></label> <br /><label id="_error_txt"></label> <br /><label id="_token"></label>
+            <br />
+            <label id="_clave"></label> <br /><label id="_valor"></label>
+        </div>
+        <!--     <h1>APP - Comentarios</h1> -->
+        <h2></h2>
+        <div>
+            <p> <button class="boton event" type="button" onclick="volver()">Volver</button> </p>
+            <p class="marco">
+                <label>Seleccionar imagen a comentar</label>
+                <div id="hookSelector"></div>
+            </p>
+            <p> <button class="boton event" type="button" onclick="volver()">Volver</button> </p>
+        </div>
     </div>
 </body>

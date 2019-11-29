@@ -1,0 +1,11 @@
+-----------------------------------
+
+PROBLEMA: SALIDA ./PROBLEMA1
+$ CORDOVA RUN ANDROID --DEVICE
+
+-----------------------------------
+
+SOLUCION(stack overflow):
+https://es.stackoverflow.com/questions/154678/install-failed-update-incompatible-package-signatures-do-not-match-the-previous
+
+-----------------------------------

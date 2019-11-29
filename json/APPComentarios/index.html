@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <head>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>ComentApp</title>
     <meta charset="UTF-8">
     <link href="estilo.css" rel="stylesheet" />
     <script type="text/javascript" src="funciones.js"></script>
@@ -69,7 +74,7 @@
 <body>
     <h1>APP - Comentarios</h1>
     <h2>LOGIN</h2>
-    <div>
+    <div class="app">
         <p class="marco">
             <label>Introducir nombre de usuario y clave</label>
             <div class="submarco">
@@ -81,12 +86,12 @@
             </div>
         </p>
         <p>
-            <button class="boton" type="button" onclick="validarLogin()">Login</button>
+            <button class="boton event" type="button" onclick="validarLogin()">Login</button>
             <br />
-            <button class="boton" type="button" onclick="window.location.href=URI_FOTOS;">Ver Fotos</button>
+            <button class="boton event" type="button" onclick="window.location.href=URI_FOTOS;">Ver Fotos</button>
         </p>
     </div>
-    <div id="retorno">
+    <div id="retorno blink">
         <br />
         <label id="_error"></label> <br />
         <label id="_error_txt"></label> <br />
