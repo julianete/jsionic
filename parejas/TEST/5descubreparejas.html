@@ -1,0 +1,130 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="parejas incluye librería de Albert González - easytimer">
+    <meta name="author" content="Jet">
+    <script src="easytimer.js"></script>
+    <!-- <script src="dist/examples.min.js"> </script> -->
+    <title>
+        WEB CON JS
+    </title>
+    <link rel="stylesheet" type="text/css" href="estilo2.css">
+    <script language="javascript">
+        window.onload = iniciarTablero;
+        var i_pareja = 0;
+        var jugada = 0;
+        var Aimagen = Array(2);
+
+        function iniciarTablero() {
+            console.log("Inicia Tablero . . .");
+
+            var td_actual;
+            var hijo_img;
+
+            var lista_td = document.querySelectorAll("td");
+            for (var i = 0; i < lista_td.length; i++) {
+                td_actual = lista_td[i];
+                td_actual.addEventListener('click', tocadoImagen);
+                hijo_img = td_actual.firstElementChild;
+                hijo_img.style.visibility = 'hidden';
+            }
+            console.log("Fin Inicia Tablero . . .");
+
+        }
+        function quitaParejaImagenes() {
+                Aimagen[0].style.visibility = 'hidden';
+                Aimagen[1].style.visibility = 'hidden';
+                Aimagen[0] = null;
+                Aimagen [1] = null;
+                i_pareja = 0;
+        }
+        function tocadoImagen() {
+            console.log("El usuario tocó el td ");
+            console.log("THIS " + this);
+            var imagen = this.firstElementChild;
+
+            //*OK* - si la pareja ya está seleccionada,
+            //ocultar para empezar (i a 0)
+
+            // ESTO SE HARA EN LA FINALIZACION DEL COUNTDOWN
+            /*  if (i_pareja == 2) {
+                 Aimagen[0].style.visibility = 'hidden';
+                 Aimagen[1].style.visibility = 'hidden';
+                 Aimagen[0] = null;
+                 // Aimagen [1] = null; //no hace falta, lo asiga en el sgte if
+                 // vuelve a empezar
+                 i_pareja = 0; */
+
+            // *OK* - control de la visibilidad de la pareja de imágenes
+            //       para el caso de la primera o la segunda se guardan ambas
+            //       en el caso de la segunda se ocultan la pareja de img
+            //       y se resetea
+            if (i_pareja < 2) {
+                console.log("Agregada imagen de pareja " + i_pareja);
+                Aimagen[i_pareja] = imagen;
+                imagen.style.visibility = 'visible';
+                i_pareja++;
+            }
+            // si las imagenes son iguales, gana
+            if (i_pareja == 2) {
+                console.log("Comprobando imagenes de pareja ");
+                console.log("pareja 0 " + Aimagen[0].src);
+                console.log("pareja 1 " + Aimagen[1].src);
+                jugada++;
+                if (Aimagen[0].src == Aimagen[1].src) {
+                    alert("Acierto en la jugada " + jugada);
+                    var mensaje = document.getElementById("hook");
+                    jugada = 0;
+                    mensaje.appendChild(imagen);
+                    tabla = document.getElementById("tabla");
+                    tabla.style.visibility = "hidden";
+                    Aimagen[0].style.visibility = "hidden";
+                    Aimagen[1].style.visibility = "hidden";
+
+                    // *TO-DO* - ENLAZAR A URL DE EXITO
+                    /* window.open("."); */
+                }
+            }
+            // *TO-DO* - temporizador que llame a borrar imágenes
+            if (i_pareja == 2 && jugada > 0) {
+                var timer = new Timer();
+                // Centa Atrás
+                timer.start({ countdown: true, startValues: { seconds: 5 } });
+                const segundos = document.getElementById("s");
+                // ver inicio segundos
+                segundos.innerHTML = timer.getTimeValues().toString();
+                // ver countdown seg
+                timer.addEventListener('secondsUpdated', function (e) {
+                    segundos.innerHTML = timer.getTimeValues().toString();
+                });
+                // callback con fin de countdown
+                timer.addEventListener('targetAchieved', function (e) {
+                    quitaParejaImagenes();
+                });
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="hook"></div>
+    <table id="tabla">
+        <tr>
+            <td><img src="./delgado.jpg"></td>
+            <td><img src="./pantera.jpg"></td>
+        </tr>
+        <tr>
+            <td><img src="./delgado.jpg"></td>
+            <td><img src="./pantera.jpg"></td>
+        </tr>
+    </table>
+    <div>
+        <label>CountDown=</label>
+        <span id="s">3</span>
+    </div>
+</body>
+
+</html>

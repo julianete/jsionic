@@ -1,0 +1,177 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="parejas incluye librería de Albert González - easytimer">
+    <meta name="author" content="Jet">
+    <!-- <script src="dist_easytimer.txt"></script> -->
+<script src="../dist/easytimer.js"></script>
+    <title> WEB CON JS - parejas </title>
+    <link rel="stylesheet" type="text/css" href="estilo2.css">
+    <script language="javascript">
+   //
+   // TO-DO - ERROR --> NO SE DEBE PODER PULSAR SOBRE LA MISMA IMAGEN
+   //
+      window.onload = iniciarTablero;
+      var i_pareja = 0;
+      var jugada = 0;
+      var Aimagen = Array(2);
+
+//variables para tablero
+      var ancho;
+      var tablero;
+      var tabX = Array (2, 3, 4, 5, 6);
+      var tabY = Array (2, 2, 2, 2, 2);
+      var tabNumImg = Array (2, 3, 4, 5, 6);
+      var siguiente;
+      var random;
+
+      function iniciarTableroSEL() {
+          console.log("Inicia Tablero SEL. . .");
+//          tablero = document.getElementById("select_tablero").selected;
+          tablero = 2;
+
+        //recoge id hook del tablero - id="tabla"
+
+        const tabla = document.getElementById("tabla");
+        //colocar tablero segun seleccion
+
+        // recorre las filas
+        for (var y = 0 ; y < tabY[tablero] ; y++){
+
+             //crear la tr de y
+             var tr = document.createElement("tr");
+
+             //agreg a la tabla
+             tabla.addChild(tr);
+
+             // recorre las columnas
+             for (var x = 0; x < ; x++) {
+
+                var td = document.createElement("td");                
+
+                //agregar listener para click
+                td.addEventListener('click', tocadoImagen);
+                tr.addChild(td);
+
+                var img = document.createElement("img");
+                //img.src="./".concat( foto[siguiente] );
+
+                img.src="./pantera.jpg";
+
+                //dejar oculta
+                img.style.visibility = 'hidden';
+                td.addChild(img);
+
+             }
+          }
+          console.log("Fin Inicia Tablero SEL. . .");
+       }
+
+      function iniciarTablero() {
+          console.log("Inicia Tablero . . .");
+//colocar tablero segun seleccion
+          var td_actual;
+          var hijo_img;
+          var lista_td = document.querySelectorAll("td");
+          for (var i = 0; i < lista_td.length; i++) {
+             td_actual = lista_td[i];
+             td_actual.addEventListener('click', tocadoImagen);
+             hijo_img = td_actual.firstElementChild;
+             hijo_img.style.visibility = 'hidden';
+          }
+          console.log("Fin Inicia Tablero . . .");
+       }
+       function tempo() {
+          var timer = new easytimer.Timer();
+          timer.start( { countdown: true, startValues: { seconds: 1 } } );
+          const lseg = document.getElementById("ls");
+          const seg = document.getElementById("s");
+          seg.innerHTML = timer.getTimeValues().toString(); //mostrar inicio segundos
+          lseg.innerHTML = 'CountDown=';
+          //mostrar countdown
+          timer.addEventListener('secondsUpdated', function (e) {
+                    seg.innerHTML = timer.getTimeValues().toString();
+          });
+          // callback al fin de countdown
+          timer.addEventListener('targetAchieved', function (e) {
+                                quitaParejaImagenes(); } );
+       }
+       function quitaParejaImagenes() {
+             Aimagen[0].style.visibility = 'hidden';
+             Aimagen[1].style.visibility = 'hidden';
+             Aimagen[0] = null;
+             i_pareja = 0;
+       // apagar los contadores
+             const lseg = document.getElementById("ls");
+             const seg = document.getElementById("s");
+             seg.innerHTML = ""; //borrar inicio segundos
+             lseg.innerHTML = '';
+       }
+       function tocadoImagen() {
+            console.log("El usuario tocó el td ");
+            console.log("THIS " + this);
+            var imagen = this.firstElementChild;
+            // si hay selección pdte
+            if (i_pareja < 2) {
+               console.log("Agrega img de pareja "+i_pareja);
+                Aimagen[i_pareja] = imagen;
+                imagen.style.visibility = 'visible';
+                i_pareja++;
+            }
+            // si las imagenes son iguales, gana
+            if (i_pareja == 2) {
+                console.log("Comprobar imagenes de pareja ");
+                console.log("pareja 0 " + Aimagen[0].src);
+                console.log("pareja 1 " + Aimagen[1].src);
+                jugada++;
+                if (Aimagen[0].src == Aimagen[1].src) {
+                    alert("Acierto en la jugada " + jugada);
+                    var msj = document.getElementById("hook");
+                    jugada = 0;
+                    msj.appendChild(imagen);
+                    tabla = document.getElementById("tabla");
+                    tabla.style.visibility = "hidden";
+                    //Aimagen[0].style.visibility = "hidden";
+                    //Aimagen[1].style.visibility = "hidden";
+                    /* window.open(".");*/
+                }
+             }
+             if (i_pareja==2 && jugada>0){
+                tempo();
+        //        quitaParejaImagenes();
+            }
+        }
+    </script>
+</head>
+<body>
+ <div id="hook"></div>
+<p>
+    <label> Seleccion de la cuadrícula </label>
+    <select id="select_tablero">
+        <!--opción por defecto-->
+        <option selected> 2 imagenes - 2 x 2</option>
+        <option> 3 imagenes - 3 x 2 </option>
+        <option> 4 imagenes - 4 x 2 </option>
+        <option> 5 imagenes - 5 x 2 </option>
+    </select>
+</p>
+<div>
+   <table id="tabla">
+<!--      <tr>
+         <td><img src="./delgado.jpg"></td>
+         <td><img src="./pantera.jpg"></td>
+      </tr>
+      <tr>
+          <td><img src="./delgado.jpg"></td>
+          <td><img src="./pantera.jpg"></td>
+      </tr>
+-->
+   </table>
+</div>
+<div>
+   <label id="ls"></label><span id="s"></span>
+</div>
+</body>
+</html>
